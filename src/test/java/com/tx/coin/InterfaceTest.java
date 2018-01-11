@@ -1,7 +1,10 @@
 package com.tx.coin;
 
+import com.tx.coin.dto.UserInfoDTO;
 import com.tx.coin.entity.Quotations;
 import com.tx.coin.service.ICoinQuotationService;
+import com.tx.coin.service.ICoinTradeService;
+import com.tx.coin.service.IUserInfoService;
 import com.tx.coin.utils.JsonMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,10 +22,26 @@ public class InterfaceTest {
 
     @Autowired
     private ICoinQuotationService quotationService;
+    @Autowired
+    private ICoinTradeService tradeService;
+    @Autowired
+    private IUserInfoService userInfoService;
 
     @Test
     public void getQuotation(){
         Quotations quotations=quotationService.getQuotation("ltc_btc");
         System.out.println(JsonMapper.nonDefaultMapper().toJson(quotations));
     }
+
+    @Test
+    public void trade(){
+        tradeService.coinTrade("etc_usdt","sell",33.35,0.1);
+    }
+
+    @Test
+    public void getUserInfo(){
+        UserInfoDTO userInfoDTO=userInfoService.getUserInfo();
+        System.out.println(JsonMapper.nonDefaultMapper().toJson(userInfoDTO));
+    }
+
 }

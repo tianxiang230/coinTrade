@@ -6,6 +6,7 @@ import com.tx.coin.service.ICoinQuotationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -23,11 +24,15 @@ public class PullQuotationJob {
     @Autowired
     private QuotationsRepository quotationsRepository;
     private Logger logger = LoggerFactory.getLogger(PullQuotationJob.class);
-    private final String symbol = "ltc_btc";
+    @Value("${config.u1}")
+    private String symbol1;
+    @Value("${config.u2}")
+    private String symbol2;
 
-//    @Scheduled(cron = "0 0/1 * * * ?")
-    @Scheduled(cron = "0 0/15 * * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
+//    @Scheduled(cron = "0 0/15 * * * ?")
     public void execute() {
+        final String symbol="ltc_btc";
         Quotations quotations = quotationService.getQuotation(symbol);
         quotations.setSymbol(symbol);
         quotations.setCreateDate(new Date());

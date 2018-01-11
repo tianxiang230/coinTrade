@@ -1,8 +1,11 @@
 package com.tx.coin.utils;
 
+import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -16,11 +19,15 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -128,15 +135,14 @@ public class HttpUtil {
     }
 
 
-    public static String doPostSSL(String apiUrl, Object json) {
+    public static String doPostSSL(String apiUrl, String json) {
         CloseableHttpClient httpClient = getHttpClient();
         HttpPost httpPost = new HttpPost(apiUrl);
         CloseableHttpResponse response = null;
         String httpStr = null;
-
         try {
             httpPost.setConfig(requestConfig);
-            StringEntity stringEntity = new StringEntity(json.toString(), "UTF-8");
+            StringEntity stringEntity = new StringEntity(json, "UTF-8");
             stringEntity.setContentEncoding("UTF-8");
             stringEntity.setContentType("application/json");
             httpPost.setEntity(stringEntity);
@@ -162,6 +168,55 @@ public class HttpUtil {
             }
         }
         return httpStr;
+    }
+
+    public static String doPostSSL(String apiUrl, Map<String,String> param) {
+        CloseableHttpClient httpClient = getHttpClient();
+        HttpPost httpPost = new HttpPost(apiUrl);
+        CloseableHttpResponse response = null;
+        String httpStr = null;
+        try {
+            httpPost.setConfig(requestConfig);
+            List<NameValuePair> valuePairs = convertMap2PostParams(param);
+            UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(valuePairs, Consts.UTF_8);
+            httpPost.setEntity(urlEncodedFormEntity);
+            response = httpClient.execute(httpPost);
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode != HttpStatus.SC_OK) {
+                return null;
+            }
+            HttpEntity entity = response.getEntity();
+            if (entity == null) {
+                return null;
+            }
+            httpStr = EntityUtils.toString(entity, "utf-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (response != null) {
+                try {
+                    EntityUtils.consume(response.getEntity());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return httpStr;
+    }
+
+    public static List<NameValuePair> convertMap2PostParams(Map<String,String> params){
+        List<String> keys = new ArrayList<String>(params.keySet());
+        if(keys.isEmpty()){
+            return null;
+        }
+        int keySize = keys.size();
+        List<NameValuePair>  data = new LinkedList<NameValuePair>() ;
+        for(int i=0;i<keySize;i++){
+            String key = keys.get(i);
+            String value = params.get(key);
+            data.add(new BasicNameValuePair(key,value));
+        }
+        return data;
     }
 }
 
