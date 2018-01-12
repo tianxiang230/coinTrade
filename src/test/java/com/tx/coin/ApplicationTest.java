@@ -1,6 +1,10 @@
 package com.tx.coin;
 
+import com.tx.coin.entity.OrderRecord;
 import com.tx.coin.entity.Quotations;
+import com.tx.coin.enums.OrderType;
+import com.tx.coin.enums.TradeType;
+import com.tx.coin.repository.OrderRecordRepository;
 import com.tx.coin.repository.QuotationsRepository;
 import com.tx.coin.repository.UserRepository;
 import com.tx.coin.entity.User;
@@ -16,6 +20,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +36,8 @@ public class ApplicationTest {
     @Autowired
     IPriceService priceService;
 
+    @Autowired
+    OrderRecordRepository orderRecordRepository;
     @Autowired
     QuotationsRepository quotationsRepository;
 
@@ -75,9 +83,19 @@ public class ApplicationTest {
 
     @Test
     public void getPrice(){
-        List<Double> priceList=quotationsRepository.getLastPriceBySymbolOrderByDate("ltc_btc",39);
+        List<Double> priceList=null;
+//        quotationsRepository.getLastPriceBySymbolOrderByDate("ltc_btc",39);
+        Double[] x = {31.45,32.0,32.555,32.347,32.376,31.694,32.106,32.402,32.916,32.834,33.457,32.982,33.291,33.261,33.532,33.531,33.348,33.303,33.591,33.611};
+        priceList=Arrays.asList(x);
         System.out.println(priceList.size());
         double price=priceService.calcuMd(priceList);
         System.out.println(price);
+    }
+
+    @Test
+    public void orderRecordTest(){
+        OrderRecord record=new OrderRecord("test", TradeType.BUY, OrderType.COMPLETED,2.3,4.2);
+        OrderRecord orderRecord = orderRecordRepository.save(record);
+        System.out.println(orderRecord.getId());
     }
 }

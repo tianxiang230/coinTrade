@@ -1,12 +1,12 @@
 package com.tx.coin.job;
 
+import com.tx.coin.config.PropertyConfig;
 import com.tx.coin.entity.Quotations;
 import com.tx.coin.repository.QuotationsRepository;
 import com.tx.coin.service.ICoinQuotationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -23,16 +23,14 @@ public class PullQuotationJob {
     private ICoinQuotationService quotationService;
     @Autowired
     private QuotationsRepository quotationsRepository;
+    @Autowired
+    private PropertyConfig propertyConfig;
     private Logger logger = LoggerFactory.getLogger(PullQuotationJob.class);
-    @Value("${config.u1}")
-    private String symbol1;
-    @Value("${config.u2}")
-    private String symbol2;
 
     @Scheduled(cron = "0 0/5 * * * ?")
 //    @Scheduled(cron = "0 0/15 * * * ?")
     public void execute() {
-        final String symbol="ltc_btc";
+        final String symbol=propertyConfig.getU1()+"_"+propertyConfig.getU2();
         Quotations quotations = quotationService.getQuotation(symbol);
         quotations.setSymbol(symbol);
         quotations.setCreateDate(new Date());

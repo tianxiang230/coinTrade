@@ -3,21 +3,24 @@ coin:
     quota: https://www.okex.com/api/v1/ticker.do?symbol=
     trade: https://www.okex.com/api/v1/trade.do
     userinfo: https://www.okex.com/api/v1/userinfo.do
+    orderinfo: https://www.okex.com/api/v1/orders_info.do
 
-interface:
-  apiKey: 23ebb8d5-9f96-435f-abc5-49f7f7596f5f
-  secretKey: 8BB13B41188F9E48B45D8B91B34AF4DA
 
 config:
+  apiKey: 23ebb8d5-9f96-435f-abc5-49f7f7596f5f
+  secretKey: 8BB13B41188F9E48B45D8B91B34AF4DA
 #底仓方
   u1: eth
   u2: usdt
 #底仓数量
   d1:
 #基本手数
-  si:
+  s1:
+#浮盈率
   y1:
   y2:
   y3:
+  y4:
+  y5:
 #补仓位置
   b1:

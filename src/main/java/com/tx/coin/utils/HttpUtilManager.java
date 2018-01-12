@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  *
  */
 public class HttpUtilManager {
-    Logger logger= LoggerFactory.getLogger(HttpUtilManager.class);
+   /* Logger logger= LoggerFactory.getLogger(HttpUtilManager.class);
     private static HttpUtilManager instance = new HttpUtilManager();
     private static HttpClient client;
     private static long startTime = System.currentTimeMillis();
@@ -140,7 +140,7 @@ public class HttpUtilManager {
         logger.info("post响应:{}",responseData);
         return responseData;
 
-    }
+    }*/
 
 }
 

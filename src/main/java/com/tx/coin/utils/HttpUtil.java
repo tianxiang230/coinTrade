@@ -173,6 +173,7 @@ public class HttpUtil {
     public static String doPostSSL(String apiUrl, Map<String,String> param) {
         CloseableHttpClient httpClient = getHttpClient();
         HttpPost httpPost = new HttpPost(apiUrl);
+        httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
         CloseableHttpResponse response = null;
         String httpStr = null;
         try {

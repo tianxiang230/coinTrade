@@ -1,9 +1,12 @@
 package com.tx.coin;
 
+import com.tx.coin.dto.OrderInfoDTO;
 import com.tx.coin.dto.UserInfoDTO;
 import com.tx.coin.entity.Quotations;
+import com.tx.coin.enums.TradeType;
 import com.tx.coin.service.ICoinQuotationService;
 import com.tx.coin.service.ICoinTradeService;
+import com.tx.coin.service.IOrderInfoService;
 import com.tx.coin.service.IUserInfoService;
 import com.tx.coin.utils.JsonMapper;
 import org.junit.Test;
@@ -26,6 +29,8 @@ public class InterfaceTest {
     private ICoinTradeService tradeService;
     @Autowired
     private IUserInfoService userInfoService;
+    @Autowired
+    private IOrderInfoService orderInfoService;
 
     @Test
     public void getQuotation(){
@@ -33,9 +38,12 @@ public class InterfaceTest {
         System.out.println(JsonMapper.nonDefaultMapper().toJson(quotations));
     }
 
+    /**
+     * {"result":true,"order_id":123969940}
+     */
     @Test
     public void trade(){
-        tradeService.coinTrade("etc_usdt","sell",33.35,0.1);
+        tradeService.coinTrade("etc_usdt", TradeType.SELL,33.05,0.1);
     }
 
     @Test
@@ -44,4 +52,9 @@ public class InterfaceTest {
         System.out.println(JsonMapper.nonDefaultMapper().toJson(userInfoDTO));
     }
 
+    @Test
+    public void getOrderInfo(){
+        OrderInfoDTO orderInfo = orderInfoService.getOrderInfo("123969940", 1, "etc_usdt");
+        System.out.println(JsonMapper.nonDefaultMapper().toJson(orderInfo));
+    }
 }

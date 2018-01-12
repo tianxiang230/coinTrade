@@ -1,6 +1,7 @@
 package com.tx.coin.service.impl;
 
 import com.tx.coin.service.IPriceService;
+import com.tx.coin.utils.MathUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,20 +13,14 @@ import java.util.List;
 public class PriceServiceImpl implements IPriceService {
     @Override
     public double calcuMd(List<Double> priceList) {
-        if (priceList==null || priceList.size()!=39){
+        if (priceList == null || priceList.size() != 20) {
             throw new IllegalArgumentException("收盘价格数不足");
         }
-        double total=0;
-        for(int i=0;i<20;i++){
-            Double singlePrice=priceList.get(i);
-            double sum=0;
-            for(int j=i;j<20+i;j++){
-                sum+=priceList.get(j);
-            }
-            double totalAverage=sum/20.0;
-            double s=singlePrice-totalAverage;
-            total+=s*s;
+        double[] priceArray = new double[priceList.size()];
+        for (int i = 0; i < priceList.size(); i++) {
+            priceArray[i] = priceList.get(i);
         }
-        return Math.sqrt(total/20.0);
+        double stdevp = MathUtil.StandardDiviation(priceArray);
+        return stdevp;
     }
 }

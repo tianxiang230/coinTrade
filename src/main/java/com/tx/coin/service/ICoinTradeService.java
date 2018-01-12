@@ -1,5 +1,7 @@
 package com.tx.coin.service;
 
+import com.tx.coin.enums.TradeType;
+
 /**
  * 币币下单交易接口
  * Created by 你慧快乐 on 2018-1-10.
@@ -13,6 +15,6 @@ public interface ICoinTradeService {
      * @param amount 交易数量
      * @return
      */
-    boolean coinTrade(String symbol,String type,double price,double amount);
+    boolean coinTrade(String symbol, TradeType type, double price, double amount);
 
 }
