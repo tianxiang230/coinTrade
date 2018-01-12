@@ -46,7 +46,6 @@ public class HttpUtil {
             e.printStackTrace();
         }
 
-
         Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
                 .register("https", sslsf)
                 .register("http", new PlainConnectionSocketFactory())

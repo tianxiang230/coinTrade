@@ -9,8 +9,6 @@ import com.tx.coin.enums.ResponseCode;
 import com.tx.coin.service.IOrderInfoService;
 import com.tx.coin.utils.EncryptHelper;
 import com.tx.coin.utils.HttpUtil;
-import com.tx.coin.utils.HttpUtilManager;
-import org.apache.http.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

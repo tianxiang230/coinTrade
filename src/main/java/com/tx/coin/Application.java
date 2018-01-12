@@ -2,6 +2,7 @@ package com.tx.coin;
 
 import com.tx.coin.converter.CustomJackson2HttpMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -16,7 +17,10 @@ import org.springframework.web.client.RestTemplate;
 @EnableScheduling
 public class Application {
     public static void main(String[] args) {
-        SpringApplication.run(Application.class);
+        SpringApplication springApplication = new SpringApplication(Application.class);
+//        关闭banner显示
+//        springApplication.setBannerMode(Banner.Mode.OFF);
+        springApplication.run(args);
     }
     @Autowired
     private RestTemplateBuilder restTemplateBuilder;
