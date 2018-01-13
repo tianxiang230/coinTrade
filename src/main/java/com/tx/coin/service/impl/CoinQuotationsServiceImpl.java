@@ -3,15 +3,18 @@ package com.tx.coin.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tx.coin.dto.QuotationsDTO;
 import com.tx.coin.entity.Quotations;
+import com.tx.coin.repository.QuotationsRepository;
 import com.tx.coin.service.ICoinQuotationService;
 import com.tx.coin.utils.HttpUtil;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by 你慧快乐 on 2018-1-9.
@@ -20,6 +23,9 @@ import java.io.IOException;
 public class CoinQuotationsServiceImpl implements ICoinQuotationService {
     @Value("${coin.remote.quota}")
     private String remoteUrl;
+    @Autowired
+    private QuotationsRepository quotationsRepository;
+    private final int DATA_SIZE = 20;
 
     private Logger logger= LoggerFactory.getLogger(CoinQuotationsServiceImpl.class);
     @Override
@@ -35,5 +41,23 @@ public class CoinQuotationsServiceImpl implements ICoinQuotationService {
         }
         return result != null ? result.toEntity() : null;
 
+    }
+
+    @Override
+    public List<Double> getLocalNewPrice(String symbol){
+        List<Double> list = quotationsRepository.getLastPriceBySymbolOrderByDate(symbol,DATA_SIZE);
+        if (list.size()<DATA_SIZE){
+            throw new RuntimeException("抓取数据不足"+DATA_SIZE);
+        }
+        return list;
+    }
+
+    @Override
+    public List<Double> getHourPrice(String symbol) {
+        List<Double> list=quotationsRepository.findHourBySymbolOrderByDate(symbol,DATA_SIZE);
+        if (list.size()<DATA_SIZE){
+            throw new RuntimeException("抓取数据不足"+DATA_SIZE);
+        }
+        return list;
     }
 }

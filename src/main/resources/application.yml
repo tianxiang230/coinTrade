@@ -4,6 +4,7 @@ coin:
     trade: https://www.okex.com/api/v1/trade.do
     userinfo: https://www.okex.com/api/v1/userinfo.do
     orderinfo: https://www.okex.com/api/v1/orders_info.do
+    cancelOrder: https://www.okex.com/api/v1/cancel_order.do
 
 
 config:
@@ -13,14 +14,14 @@ config:
   u1: eth
   u2: usdt
 #底仓数量
-  d1:
+  d1: 200
 #基本手数
-  s1:
+  s1: 5.5
 #浮盈率
-  y1:
-  y2:
-  y3:
-  y4:
-  y5:
+  y1: 1.05
+  y2: 1.06
+  y3: 1.07
+  y4: 1.08
+  y5: 1.09
 #补仓位置
-  b1:
+  b1: 100

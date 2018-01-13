@@ -2,6 +2,7 @@ package com.tx.coin.entity;
 
 import com.tx.coin.enums.OrderType;
 import com.tx.coin.enums.TradeType;
+import com.tx.coin.utils.DateUtil;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,7 +19,7 @@ public class OrderRecord extends BaseEntity {
     public OrderRecord(){}
 
     public OrderRecord(String symbol,TradeType tradeType,OrderType orderType,double price,double amount){
-        super.setCreateDate(new Date());
+        super.setCreateDate(DateUtil.getFormatDateTime(new Date()));
         this.amount=amount;
         this.price=price;
         this.orderType=orderType;

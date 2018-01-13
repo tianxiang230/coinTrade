@@ -7,6 +7,7 @@ import com.tx.coin.enums.TradeType;
 import com.tx.coin.repository.OrderRecordRepository;
 import com.tx.coin.repository.QuotationsRepository;
 import com.tx.coin.service.IPriceService;
+import com.tx.coin.utils.DateUtil;
 import com.tx.coin.utils.JsonMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +18,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -69,5 +72,22 @@ public class ApplicationTest {
         OrderRecord record=new OrderRecord("test", TradeType.BUY, OrderType.COMPLETED,2.3,4.2);
         OrderRecord orderRecord = orderRecordRepository.save(record);
         System.out.println(orderRecord.getId());
+    }
+
+    @Test
+    public void updateTime(){
+       List<Quotations> all= quotationsRepository.findAll();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+       for(Quotations quotations:all){
+           try {
+               Long dateStamp = Long.valueOf(quotations.getDate());
+               quotations.setDate(sf.format(dateStamp));
+               Long createStamp = Long.valueOf(quotations.getCreateDate());
+               quotations.setCreateDate(sf.format(createStamp));
+               quotationsRepository.save(quotations);
+           }catch (NumberFormatException e){
+
+           }
+       }
     }
 }

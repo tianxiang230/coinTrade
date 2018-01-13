@@ -31,40 +31,41 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
     @Value("${coin.remote.orderinfo}")
     private String orderInfoUrl;
 
-    private Logger logger= LoggerFactory.getLogger(OrderInfoServiceImpl.class);
-    private ObjectMapper objectMapper=new ObjectMapper();
+    private Logger logger = LoggerFactory.getLogger(OrderInfoServiceImpl.class);
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public OrderInfoDTO getOrderInfo(String orderId,int type,String symbol) {
-        String apiKey= propertyConfig.getApiKey();
-        String secretKey= propertyConfig.getSecretKey();
-        Map<String,String> param=new HashMap<>();
-        param.put("api_key",apiKey);
-        param.put("symbol",symbol);
-        param.put("type",String.valueOf(type));
-        param.put("order_id",orderId);
-        String sign = EncryptHelper.sign(param,secretKey,"utf-8");
-        param.put("sign",sign);
-        param.put("secret_key",secretKey);
-        String result=null;
+    public OrderInfoDTO getOrderInfo(String orderId, int type, String symbol) {
+        String apiKey = propertyConfig.getApiKey();
+        String secretKey = propertyConfig.getSecretKey();
+        Map<String, String> param = new HashMap<>();
+        param.put("api_key", apiKey);
+        param.put("symbol", symbol);
+        param.put("type", String.valueOf(type));
+        param.put("order_id", orderId);
+        String sign = EncryptHelper.sign(param, secretKey, "utf-8");
+        param.put("sign", sign);
+        param.put("secret_key", secretKey);
+        String result = null;
         try {
-            result = HttpUtil.doPostSSL(orderInfoUrl,param);
-            JsonNode rootNode=objectMapper.readTree(result);
-            boolean success=rootNode.get("result").asBoolean();
-            if (success){
-                JsonNode ordersNode=rootNode.get("orders");
+            result = HttpUtil.doPostSSL(orderInfoUrl, param);
+            JsonNode rootNode = objectMapper.readTree(result);
+            boolean success = rootNode.get("result").asBoolean();
+            if (success) {
+                JsonNode ordersNode = rootNode.get("orders");
                 String ordersStr = ordersNode.toString();
-                List<OrderInfoDTO> orderList = objectMapper.readValue(ordersStr,new TypeReference<List<OrderInfoDTO>>(){});
-                logger.info("获取到订单数量:{}",orderList.size());
+                List<OrderInfoDTO> orderList = objectMapper.readValue(ordersStr, new TypeReference<List<OrderInfoDTO>>() {
+                });
+                logger.info("获取到订单数量:{}", orderList.size());
                 return orderList.get(0);
-            }else{
-                String errorCode=rootNode.get("error_code").asText();
+            } else {
+                String errorCode = rootNode.get("error_code").asText();
                 logger.info(ResponseCode.responseCode.get(errorCode));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        logger.info("币币交易返回:{}",result);
+        logger.info("币币交易返回:{}", result);
         return null;
     }
 }

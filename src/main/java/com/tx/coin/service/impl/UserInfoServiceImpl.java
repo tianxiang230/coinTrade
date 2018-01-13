@@ -42,7 +42,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         param.put("sign",sign);
         String result=null;
         try {
-            result  = result = HttpUtil.doPostSSL(userInfoUrl,param);
+            result = HttpUtil.doPostSSL(userInfoUrl,param);
             if (StringUtils.isNotBlank(result)){
                 JsonNode rootNode=mapper.readTree(result);
                 boolean success=rootNode.get("result").asBoolean();

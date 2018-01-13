@@ -2,6 +2,7 @@ package com.tx.coin.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tx.coin.entity.Quotations;
+import com.tx.coin.utils.DateUtil;
 
 import java.util.Date;
 
@@ -34,7 +35,7 @@ public class QuotationsDTO {
     public Quotations toEntity() {
         Quotations quotations = new Quotations();
         quotations.setBuy(Double.valueOf(ticker.getBuy()));
-        quotations.setDate(new Date(Long.valueOf(getDate())));
+        quotations.setDate(DateUtil.getFormatDateTime(Long.valueOf(getDate())));
         quotations.setHigh(Double.valueOf(ticker.getHigh()));
         quotations.setLast(Double.valueOf(ticker.getLast()));
         quotations.setLow(Double.valueOf(ticker.getLow()));

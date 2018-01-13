@@ -2,9 +2,14 @@ package com.tx.coin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tx.coin.dto.UserInfoDTO;
+import com.tx.coin.utils.JsonMapper;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 你慧快乐 on 2018-1-11.
@@ -16,5 +21,15 @@ public class AbnormalTest {
         ObjectMapper mapper=new ObjectMapper();
         UserInfoDTO userInfo=mapper.readValue(json,UserInfoDTO.class);
         System.out.println(userInfo.getAce());
+    }
+
+    @Test
+    public void testJson(){
+        List<Map<String,String>> list=new ArrayList<>();
+        Map<String,String> map=new HashMap<>();
+        map.put("1","one");
+        map.put("2","tow");
+        list.add(map);
+        System.out.println(JsonMapper.nonDefaultMapper().toJson(list));
     }
 }

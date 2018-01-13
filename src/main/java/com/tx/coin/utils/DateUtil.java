@@ -313,13 +313,22 @@ public class DateUtil {
         return date;
     }
 
-    public static String getFormatDateString(Date date) {
+    public static String getFormatDateTime(Date date) {
         String str = "";
         if (date == null) {
             return str;
         }
-        SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return sf.format(date);
+    }
+
+    public static String getFormatDateTime(Long timestamp) {
+        String str = "";
+        if (timestamp == null) {
+            return str;
+        }
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sf.format(timestamp);
     }
 
 }

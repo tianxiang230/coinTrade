@@ -148,6 +148,11 @@ public class PropertyConfig {
 
     @Override
     public String toString() {
+        Map<String,Object> params=getParams();
+        return JsonMapper.nonDefaultMapper().toJson(params);
+    }
+
+    public Map<String,Object> getParams(){
         Map<String,Object> params=new HashMap<>();
         params.put("apiKey",getApiKey());
         params.put("secretKey",getSecretKey());
@@ -161,7 +166,7 @@ public class PropertyConfig {
         params.put("y3",getY3());
         params.put("y4",getY4());
         params.put("y5",getY5());
-        return JsonMapper.nonDefaultMapper().toJson(params);
+        return params;
     }
 
     @PostConstruct

@@ -2,7 +2,6 @@ package com.tx.coin.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.util.Date;
 
 /**
  * Created by 你慧快乐 on 2018-1-9.
@@ -41,7 +40,7 @@ public class Quotations extends BaseEntity{
     /**
      * 返回时间
      */
-    private Date date;
+    private String date;
 
     public String getSymbol() {
         return symbol;
@@ -99,11 +98,11 @@ public class Quotations extends BaseEntity{
         this.vol = vol;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 }

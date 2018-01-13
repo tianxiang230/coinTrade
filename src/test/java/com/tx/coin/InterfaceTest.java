@@ -9,6 +9,7 @@ import com.tx.coin.service.ICoinTradeService;
 import com.tx.coin.service.IOrderInfoService;
 import com.tx.coin.service.IUserInfoService;
 import com.tx.coin.utils.JsonMapper;
+import com.tx.coin.ws.api.ITradeRecordWsService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,8 @@ public class InterfaceTest {
     private IUserInfoService userInfoService;
     @Autowired
     private IOrderInfoService orderInfoService;
+    @Autowired
+    private ITradeRecordWsService tradeRecordWsService;
 
     @Test
     public void getQuotation(){
@@ -56,5 +59,10 @@ public class InterfaceTest {
     public void getOrderInfo(){
         OrderInfoDTO orderInfo = orderInfoService.getOrderInfo("123969940", 1, "etc_usdt");
         System.out.println(JsonMapper.nonDefaultMapper().toJson(orderInfo));
+    }
+
+    @Test
+    public void getTradeRecordWs(){
+        tradeRecordWsService.tradeRecord("etc_usdt");
     }
 }
