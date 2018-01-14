@@ -31,8 +31,8 @@ public class PullQuotationJob {
     private PropertyConfig propertyConfig;
     private Logger logger = LoggerFactory.getLogger(PullQuotationJob.class);
 
-    @Scheduled(cron = "0 0/5 * * * ?")
-//    @Scheduled(cron = "0 0/15 * * * ?")
+//    @Scheduled(cron = "0 0/5 * * * ?")
+    @Scheduled(cron = "0 0/15 * * * ?")
     public void execute() {
         //执行交易流程
 //        operatorService.operate();

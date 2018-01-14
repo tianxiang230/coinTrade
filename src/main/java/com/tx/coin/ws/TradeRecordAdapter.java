@@ -80,32 +80,6 @@ public class TradeRecordAdapter {
         System.out.println(JsonMapper.nonDefaultMapper().toJson(tradeRecords));
     }
 
-    /**
-     * 根据交易记录获取平均价格
-     *
-     * @param symbol
-     * @return
-     */
-    public static Double getTradeAvgPrice(String symbol) {
-        List<OrderRecordDetail> recoreds = tradeRecords.get(symbol);
-        if (recoreds == null || recoreds.size() <= 0) {
-            return null;
-        }
-        int size=recoreds.size();
-        double totalPrice=0;
-        double totalAmount=0;
-        for(OrderRecordDetail recordDetail:recoreds){
-            double amount=recordDetail.getTradeAmount();
-            double price=recordDetail.getTradePrice();
-
-        }
-        return null;
-    }
-
-    public static JavaType getCollectionType(Class<?> collectionClass, Class<?>... elementClasses) {
-        return jsonMapper.getTypeFactory().constructParametricType(collectionClass, elementClasses);
-    }
-
     public static class OrderRecordDetail {
 
         OrderRecordDetail(String[] detail) {

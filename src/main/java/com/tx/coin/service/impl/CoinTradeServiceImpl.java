@@ -60,7 +60,7 @@ public class CoinTradeServiceImpl implements ICoinTradeService {
             } else {
                 orderRecord = new OrderRecord(symbol, tradeType, OrderType.NOT_COMPLETE, price, amount);
             }
-            logger.info("执行交易[{}]操作,交易币种[{}],价格[{}],交易量[{}]", tradeType.getName(), symbol, price, amount);
+            logger.info(String.format("执行交易[{}]操作,交易币种[{}],价格[{}],交易量[{}]",tradeType.getName(), symbol, price, amount));
             orderRecordRepository.save(orderRecord);
         } catch (IOException e) {
             logger.info("交易发生异常，异常信息:{}", ExceptionUtils.getStackTrace(e));

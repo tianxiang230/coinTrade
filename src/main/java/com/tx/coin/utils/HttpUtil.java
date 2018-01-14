@@ -21,6 +21,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
@@ -37,6 +39,8 @@ public class HttpUtil {
     static PoolingHttpClientConnectionManager cm = null;
     private static RequestConfig requestConfig;
     private static final int MAX_TIMEOUT = 7000;
+
+    private static Logger logger= LoggerFactory.getLogger(HttpUtil.class);
 
     public void init() {
         LayeredConnectionSocketFactory sslsf = null;
@@ -74,7 +78,7 @@ public class HttpUtil {
     }
 
 
-    public static String doGetSSL(String apiUrl, Map<String, Object> params) {
+    public static String doGetSSL(String apiUrl, Map<String, String> params) {
         return doGetSSL(apiUrl, params, false);
     }
 
@@ -86,7 +90,7 @@ public class HttpUtil {
      * @param isAjax
      * @return
      */
-    public static String doGetSSL(String apiUrl, Map<String, Object> params, boolean isAjax) {
+    public static String doGetSSL(String apiUrl, Map<String, String> params, boolean isAjax) {
         CloseableHttpClient httpClient = getHttpClient();
         StringBuffer param = new StringBuffer();
         int i = 0;
@@ -102,6 +106,7 @@ public class HttpUtil {
             }
         }
         apiUrl += param;
+        logger.info("ssl get请求地址:{}",apiUrl);
         HttpGet httpGet = new HttpGet(apiUrl);
         if (isAjax) {
             httpGet.setHeader("X-Requested-With", "XMLHttpRequest");
@@ -130,6 +135,7 @@ public class HttpUtil {
                 }
             }
         }
+        logger.info("ssl get响应:{}",httpStr);
         return httpStr;
     }
 
@@ -170,6 +176,7 @@ public class HttpUtil {
     }
 
     public static String doPostSSL(String apiUrl, Map<String,String> param) {
+        logger.info("ssl post请求:{}",JsonMapper.nonDefaultMapper().toJson(param));
         CloseableHttpClient httpClient = getHttpClient();
         HttpPost httpPost = new HttpPost(apiUrl);
         httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -201,6 +208,7 @@ public class HttpUtil {
                 }
             }
         }
+        logger.info("ssl post响应:{}",httpStr);
         return httpStr;
     }
 

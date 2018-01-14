@@ -1,13 +1,13 @@
 package com.tx.coin;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.tx.coin.dto.KLineDataDTO;
 import com.tx.coin.dto.OrderInfoDTO;
 import com.tx.coin.dto.UserInfoDTO;
 import com.tx.coin.entity.Quotations;
+import com.tx.coin.enums.TimeIntervalEnum;
 import com.tx.coin.enums.TradeType;
-import com.tx.coin.service.ICoinQuotationService;
-import com.tx.coin.service.ICoinTradeService;
-import com.tx.coin.service.IOrderInfoService;
-import com.tx.coin.service.IUserInfoService;
+import com.tx.coin.service.*;
 import com.tx.coin.utils.JsonMapper;
 import com.tx.coin.ws.api.ITradeRecordWsService;
 import org.junit.Test;
@@ -15,6 +15,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Calendar;
+import java.util.List;
 
 /**
  * 测试外部接口
@@ -34,6 +37,8 @@ public class InterfaceTest {
     private IOrderInfoService orderInfoService;
     @Autowired
     private ITradeRecordWsService tradeRecordWsService;
+    @Autowired
+    private IKLineService ikLineService;
 
     @Test
     public void getQuotation(){
@@ -64,5 +69,15 @@ public class InterfaceTest {
     @Test
     public void getTradeRecordWs(){
         tradeRecordWsService.tradeRecord("etc_usdt");
+    }
+
+
+    @Test
+    public void getKLine(){
+        Calendar calendar=Calendar.getInstance();
+        calendar.set(Calendar.HOUR,15);
+        calendar.set(Calendar.DATE,11);
+        List<KLineDataDTO> list= ikLineService.pullLineData("etc_btc", TimeIntervalEnum.ONE_HOUR,100,calendar.getTime());
+        System.out.println(JsonMapper.nonDefaultMapper().toJson(list));
     }
 }

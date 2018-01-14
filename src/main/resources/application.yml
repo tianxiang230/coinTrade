@@ -5,23 +5,24 @@ coin:
     userinfo: https://www.okex.com/api/v1/userinfo.do
     orderinfo: https://www.okex.com/api/v1/orders_info.do
     cancelOrder: https://www.okex.com/api/v1/cancel_order.do
+    kline: https://www.okex.com/api/v1/kline.do
 
 
 config:
   apiKey: 23ebb8d5-9f96-435f-abc5-49f7f7596f5f
   secretKey: 8BB13B41188F9E48B45D8B91B34AF4DA
 #底仓方
-  u1: eth
+  u1: etc
   u2: usdt
 #底仓数量
-  d1: 200
+  d1: 0
 #基本手数
-  s1: 5.5
+  s1: 5
 #浮盈率
-  y1: 1.05
-  y2: 1.06
-  y3: 1.07
-  y4: 1.08
-  y5: 1.09
+  y1: 1.005
+  y2: 1.006
+  y3: 1.007
+  y4: 1.008
+  y5: 1.009
 #补仓位置
-  b1: 100
+  b1: 1.002
