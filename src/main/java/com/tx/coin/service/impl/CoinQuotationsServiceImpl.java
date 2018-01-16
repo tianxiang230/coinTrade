@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -27,15 +28,16 @@ public class CoinQuotationsServiceImpl implements ICoinQuotationService {
     private QuotationsRepository quotationsRepository;
     private final int DATA_SIZE = 20;
 
-    private Logger logger= LoggerFactory.getLogger(CoinQuotationsServiceImpl.class);
+    private Logger logger = LoggerFactory.getLogger(CoinQuotationsServiceImpl.class);
+
     @Override
     public Quotations getQuotation(String symbol) {
         QuotationsDTO result = null;
-        String remoteStr=HttpUtil.doGetSSL(remoteUrl+symbol,null);
-        logger.info("获取行情远程接口返回:{}",remoteStr);
-        ObjectMapper objectMapper=new ObjectMapper();
+        String remoteStr = HttpUtil.doGetSSL(remoteUrl + symbol, null);
+        logger.info("获取行情远程接口返回:{}", remoteStr);
+        ObjectMapper objectMapper = new ObjectMapper();
         try {
-            result = objectMapper.readValue(remoteStr,QuotationsDTO.class);
+            result = objectMapper.readValue(remoteStr, QuotationsDTO.class);
         } catch (IOException e) {
             logger.error("获取行情转换为实体发生异常,{}", ExceptionUtils.getStackTrace(e));
         }
@@ -44,19 +46,27 @@ public class CoinQuotationsServiceImpl implements ICoinQuotationService {
     }
 
     @Override
-    public List<Double> getLocalNewPrice(String symbol){
-        List<Double> list = quotationsRepository.getLastPriceBySymbolOrderByDate(symbol,DATA_SIZE);
-        if (list.size()<DATA_SIZE){
-            throw new RuntimeException("抓取数据不足"+DATA_SIZE);
+    public List<Double> getLocalNewPrice(String symbol) {
+        List<Double> list = quotationsRepository.getLastPriceBySymbolOrderByDate(symbol, DATA_SIZE);
+        if (list.size() < DATA_SIZE) {
+            throw new RuntimeException("抓取数据不足" + DATA_SIZE);
         }
         return list;
     }
 
     @Override
     public List<Double> getHourPrice(String symbol) {
-        List<Double> list=quotationsRepository.findHourBySymbolOrderByDate(symbol,DATA_SIZE);
-        if (list.size()<DATA_SIZE){
-            throw new RuntimeException("抓取数据不足"+DATA_SIZE);
+        List<Double> list = null;
+        if (Calendar.getInstance().get(Calendar.MINUTE) == 0) {
+            //整点
+            list = quotationsRepository.findHourBySymbolOrderByDate(symbol, DATA_SIZE);
+        } else {
+            list = quotationsRepository.findHourBySymbolOrderByDate(symbol, DATA_SIZE - 1);
+            Double lastPrice = quotationsRepository.getLastPriceBySymbolOrderByDate(symbol, 1).get(0);
+            list.add(lastPrice);
+        }
+        if (list.size() < DATA_SIZE) {
+            throw new RuntimeException("抓取数据不足" + DATA_SIZE);
         }
         return list;
     }

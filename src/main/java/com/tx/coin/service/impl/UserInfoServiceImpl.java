@@ -7,8 +7,8 @@ import com.tx.coin.dto.UserInfoDTO;
 import com.tx.coin.service.IUserInfoService;
 import com.tx.coin.utils.EncryptHelper;
 import com.tx.coin.utils.HttpUtil;
+import com.tx.coin.utils.JsonMapper;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +43,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         String result=null;
         try {
             result = HttpUtil.doPostSSL(userInfoUrl,param);
+            logger.info("获取用户信息,请求:{},响应:{}", JsonMapper.nonDefaultMapper().toJson(param),result);
             if (StringUtils.isNotBlank(result)){
                 JsonNode rootNode=mapper.readTree(result);
                 boolean success=rootNode.get("result").asBoolean();

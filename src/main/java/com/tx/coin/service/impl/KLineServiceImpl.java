@@ -9,6 +9,7 @@ import com.tx.coin.service.IKLineService;
 import com.tx.coin.utils.EncryptHelper;
 import com.tx.coin.utils.HttpUtil;
 import com.tx.coin.utils.IteratorUtils;
+import com.tx.coin.utils.JsonMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,7 @@ public class KLineServiceImpl implements IKLineService {
         String result = null;
         try {
             result = HttpUtil.doGetSSL(klineUrl, param);
+            logger.info("获取K线数据,请求:{},响应:{}", JsonMapper.nonDefaultMapper().toJson(param),result);
             try {
                 JsonNode rootNode = objectMapper.readTree(result);
                 List<KLineDataDTO> lineDatas=new ArrayList<>();

@@ -1,23 +1,21 @@
 package com.tx.coin.service.impl;
 
 import com.tx.coin.config.PropertyConfig;
+import com.tx.coin.dto.OrderInfoDTO;
 import com.tx.coin.dto.UserInfoDTO;
+import com.tx.coin.enums.OrderStateEnum;
 import com.tx.coin.enums.TradeType;
-import com.tx.coin.repository.QuotationsRepository;
 import com.tx.coin.service.*;
 import com.tx.coin.utils.MathUtil;
-import com.tx.coin.ws.TradeRecordAdapter;
 import com.tx.coin.ws.api.ITradeRecordWsService;
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -42,12 +40,11 @@ public class OperatorServiceImpl implements IOperatorService {
     @Autowired
     private IUserInfoService userInfoService;
     @Autowired
+    private IOrderInfoService orderInfoService;
+    @Autowired
     private ITradeRecordWsService tradeRecordWsService;
+    private DecimalFormat decimalFormat = new DecimalFormat("####.########");
 
-    /**
-     * 交易中的订单号
-     */
-    private List<String> tradeOrderIds = new ArrayList<>();
     //成交时间
     private Date t1;
     private Logger logger = LoggerFactory.getLogger(OperatorServiceImpl.class);
@@ -56,12 +53,14 @@ public class OperatorServiceImpl implements IOperatorService {
     public void operate() {
         String symbol = propertyConfig.getU1() + "_" + propertyConfig.getU2();
         List<Double> prices = quotationService.getLocalNewPrice(symbol);
-        //前19个价格均值
+        //前20个价格均值
         double mb = MathUtil.avg(prices);
         //取得标准差
+
         double adv = priceService.calcuMd(prices);
-        double ub = mb + 2 * adv;
+//        double ub = mb + 2 * adv;
         double lb = mb - 2 * adv;
+        logger.info("买入lb:{}", lb);
         UserInfoDTO userInfo = userInfoService.getUserInfo();
         Map<String, Object> userInfoMap = null;
         try {
@@ -70,23 +69,41 @@ public class OperatorServiceImpl implements IOperatorService {
             e.printStackTrace();
         }
         if (userInfoMap != null) {
-            //用户余额
-            Double d2 = Double.valueOf (userInfoMap.get(propertyConfig.getU1()).toString());
-            if (d2==null){
-                logger.info("获取{}余额失败",propertyConfig.getU1());
+            //底仓方账户余额
+            Double d2 = Double.valueOf(userInfoMap.get(propertyConfig.getU1()).toString());
+            if (d2 == null) {
+                logger.info("获取{}余额失败", propertyConfig.getU1());
+                return;
+            } else {
+                logger.info("获取{}余额为:{}", propertyConfig.getU1(), decimalFormat.format(d2));
+            }
+            //获取ASK方账户余额
+            Double d4 = Double.valueOf(userInfoMap.get(propertyConfig.getU2()).toString());
+            if (d4 == null) {
+                logger.info("获取{}余额失败", propertyConfig.getU2());
+                return;
+            } else {
+                logger.info("获取{}余额为:{}", propertyConfig.getU2(), decimalFormat.format(d4));
+            }
+            if (d2.doubleValue() == propertyConfig.getD1().doubleValue()) {
+                //记录时间
+                t1 = new Date();
+            }
+            if (propertyConfig.getD1().doubleValue() > d2.doubleValue() || propertyConfig.getD3() > d4.doubleValue()) {
+                logger.info(String.format("余额不足,终止运行,d1=%f,d2=%f,d3=%f,d4=%f", propertyConfig.getD1(), d2, propertyConfig.getD3(), d4));
+                //不运行
                 return;
             }
-            if (d2.doubleValue()==propertyConfig.getD1().doubleValue()){
-                //记录时间
-                t1=new Date();
-            }
-            logger.info("获取{}余额为:{}", propertyConfig.getU1(), d2);
             if (propertyConfig.getD1().doubleValue() == d2.doubleValue()) {
                 buy(symbol, d2, lb);
             } else if (propertyConfig.getD1().doubleValue() < d2.doubleValue()) {
                 //取消所有订单
-                String successOrderIds = StringUtils.join(tradeOrderIds, ",");
-                tradeService.cancelTrade(symbol, successOrderIds);
+                String[] successOrderIds = getCancelOrders(orderInfoService.getOrderInfo("-1", symbol));
+                if (successOrderIds != null) {
+                    for (String orders : successOrderIds) {
+                        tradeService.cancelTrade(symbol, orders);
+                    }
+                }
                 buy(symbol, d2, lb);
                 //5秒后卖出
                 try {
@@ -94,16 +111,20 @@ public class OperatorServiceImpl implements IOperatorService {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                //最新的余额
-                d2 = (Double) (userInfoMap.get(propertyConfig.getU1()));
                 double sellAmount = d2 - propertyConfig.getD1();
                 double perAmount = sellAmount / 5.0;
-                double advPrice = MathUtil.avg(quotationService.getHourPrice(symbol));
-                tradeService.coinTrade(symbol, TradeType.SELL, advPrice * propertyConfig.getY1(), perAmount);
-                tradeService.coinTrade(symbol, TradeType.SELL, advPrice * propertyConfig.getY2(), perAmount);
-                tradeService.coinTrade(symbol, TradeType.SELL, advPrice * propertyConfig.getY3(), perAmount);
-                tradeService.coinTrade(symbol, TradeType.SELL, advPrice * propertyConfig.getY4(), perAmount);
-                tradeService.coinTrade(symbol, TradeType.SELL, advPrice * propertyConfig.getY5(), sellAmount - 4 * perAmount);
+                //获取整点的收盘价
+                prices = quotationService.getHourPrice(symbol);
+                //重新计算整点标准差
+                adv = priceService.calcuMd(prices);
+                mb = MathUtil.avg(prices);
+                double ub = mb + 2 * adv;
+                logger.info("标准差:{},平均值:{},卖出UB:{}", new Object[]{adv, mb, ub});
+                tradeService.coinTrade(symbol, TradeType.SELL, ub * propertyConfig.getY1(), perAmount);
+                tradeService.coinTrade(symbol, TradeType.SELL, ub * propertyConfig.getY2(), perAmount);
+                tradeService.coinTrade(symbol, TradeType.SELL, ub * propertyConfig.getY3(), perAmount);
+                tradeService.coinTrade(symbol, TradeType.SELL, ub * propertyConfig.getY4(), perAmount);
+                tradeService.coinTrade(symbol, TradeType.SELL, ub * propertyConfig.getY5(), sellAmount - 4 * perAmount);
             }
         } else {
             logger.info("获取余额失败");
@@ -113,25 +134,62 @@ public class OperatorServiceImpl implements IOperatorService {
 
     private void buy(String symbol, Double d2, Double lb) {
         if (d2 != null) {
-            String successOrderId = null;
             if (d2 > lb) {
                 //在LB价格位置买入S1手
-                successOrderId = tradeService.coinTrade(symbol, TradeType.BUY, lb, propertyConfig.getS1());
+                tradeService.coinTrade(symbol, TradeType.BUY, lb, propertyConfig.getS1());
             } else {
                 //在D2*(1-B1)位置买入S1手
                 double buyPrice = d2 * (1 - propertyConfig.getB1());
-                successOrderId = tradeService.coinTrade(symbol, TradeType.BUY, buyPrice, propertyConfig.getS1());
+                tradeService.coinTrade(symbol, TradeType.BUY, buyPrice, propertyConfig.getS1());
             }
             //记录成交时间
             t1 = new Date();
-            //加入成功订单号
-            tradeOrderIds.add(successOrderId);
         }
     }
 
-//    @PostConstruct
+    //    @PostConstruct
     private void regRecord() {
         logger.info("订阅交易记录");
         tradeRecordWsService.tradeRecord(propertyConfig.getU1() + "_" + propertyConfig.getU2());
+    }
+
+    public static String[] getCancelOrders(List<OrderInfoDTO> orders) {
+        if (orders.size() <= 0) {
+            return null;
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        for (OrderInfoDTO order : orders) {
+            Integer state = order.getStatus();
+            if (state.equals(OrderStateEnum.PART_DEAL.getValue()) || state.equals(OrderStateEnum.UNDEAL.getValue())) {
+                stringBuilder.append(order.getOrderId());
+                stringBuilder.append(",");
+            }
+        }
+        if (stringBuilder.length() <= 0) {
+            return null;
+        }
+        String allIds = stringBuilder.substring(0, stringBuilder.length() - 1);
+        String[] ids = allIds.split(",");
+        int lenth = ids.length;
+        int arrayLength = 0;
+        if (lenth % 3 == 0) {
+            arrayLength = lenth / 3;
+        } else {
+            arrayLength = lenth / 3 + 1;
+        }
+        String[] orderIds = new String[arrayLength];
+        int index = -1;
+        stringBuilder=new StringBuilder();
+        for (int i = 0; i < lenth; i++) {
+            if (i > 0 && i % 3 == 0) {
+                orderIds[++index] = stringBuilder.substring(0, stringBuilder.length() - 1);
+                stringBuilder = new StringBuilder();
+            }
+            stringBuilder.append(ids[i]).append(",");
+        }
+        if (stringBuilder.length() > 0) {
+            orderIds[++index] = stringBuilder.substring(0, stringBuilder.length() - 1);
+        }
+        return orderIds;
     }
 }

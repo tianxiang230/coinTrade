@@ -31,12 +31,10 @@ public class PullQuotationJob {
     private PropertyConfig propertyConfig;
     private Logger logger = LoggerFactory.getLogger(PullQuotationJob.class);
 
-//    @Scheduled(cron = "0 0/5 * * * ?")
+    //    @Scheduled(cron = "0 0/5 * * * ?")
     @Scheduled(cron = "0 0/15 * * * ?")
     public void execute() {
-        //执行交易流程
-//        operatorService.operate();
-        final String symbol=propertyConfig.getU1()+"_"+propertyConfig.getU2();
+        final String symbol = propertyConfig.getU1() + "_" + propertyConfig.getU2();
         Quotations quotations = quotationService.getQuotation(symbol);
         quotations.setSymbol(symbol);
         quotations.setCreateDate(DateUtil.getFormatDateTime(new Date()));
@@ -44,6 +42,7 @@ public class PullQuotationJob {
         if (quotations != null) {
             logger.info("存入最新行情成功");
         }
+        //执行交易流程
+        operatorService.operate();
     }
-
 }

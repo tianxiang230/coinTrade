@@ -35,7 +35,7 @@ public class QuotationsDTO {
     public Quotations toEntity() {
         Quotations quotations = new Quotations();
         quotations.setBuy(Double.valueOf(ticker.getBuy()));
-        quotations.setDate(DateUtil.getFormatDateTime(Long.valueOf(getDate())));
+        quotations.setDate(DateUtil.getFormatDateTime(Long.valueOf(getDate()) * 1000));
         quotations.setHigh(Double.valueOf(ticker.getHigh()));
         quotations.setLast(Double.valueOf(ticker.getLast()));
         quotations.setLow(Double.valueOf(ticker.getLow()));

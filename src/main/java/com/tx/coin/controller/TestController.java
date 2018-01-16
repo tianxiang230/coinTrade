@@ -16,9 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class TestController {
 
-@RequestMapping("/test.html")
-    public String test(ModelMap model, HttpServletRequest request){
-model.addAttribute("var","老郭");
+    @RequestMapping("/test.html")
+    public String test(ModelMap model, HttpServletRequest request) {
+        model.addAttribute("var", "老郭");
         return "test";
     }
 }

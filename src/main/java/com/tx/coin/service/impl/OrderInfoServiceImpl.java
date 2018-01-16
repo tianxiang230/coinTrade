@@ -9,6 +9,7 @@ import com.tx.coin.enums.ResponseCode;
 import com.tx.coin.service.IOrderInfoService;
 import com.tx.coin.utils.EncryptHelper;
 import com.tx.coin.utils.HttpUtil;
+import com.tx.coin.utils.JsonMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
     @Autowired
     private PropertyConfig propertyConfig;
 
+    @Value("${coin.remote.ordersinfo}")
+    private String ordersInfoUrl;
     @Value("${coin.remote.orderinfo}")
     private String orderInfoUrl;
 
@@ -35,7 +38,7 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public OrderInfoDTO getOrderInfo(String orderId, int type, String symbol) {
+    public List<OrderInfoDTO> getBatchOrdersInfo(String orderId, int type, String symbol) {
         String apiKey = propertyConfig.getApiKey();
         String secretKey = propertyConfig.getSecretKey();
         Map<String, String> param = new HashMap<>();
@@ -48,7 +51,42 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
         param.put("secret_key", secretKey);
         String result = null;
         try {
+            result = HttpUtil.doPostSSL(ordersInfoUrl, param);
+            logger.info("批量获取订单信息接口,请求:{},响应:{}", JsonMapper.nonDefaultMapper().toJson(param),result);
+            JsonNode rootNode = objectMapper.readTree(result);
+            boolean success = rootNode.get("result").asBoolean();
+            if (success) {
+                JsonNode ordersNode = rootNode.get("orders");
+                String ordersStr = ordersNode.toString();
+                List<OrderInfoDTO> orderList = objectMapper.readValue(ordersStr, new TypeReference<List<OrderInfoDTO>>() {
+                });
+                logger.info("批量获取订单接口获取到订单数量:{}", orderList.size());
+                return orderList;
+            } else {
+                String errorCode = rootNode.get("error_code").asText();
+                logger.info(ResponseCode.responseCode.get(errorCode));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public List<OrderInfoDTO> getOrderInfo(String orderId, String symbol) {
+        String apiKey = propertyConfig.getApiKey();
+        String secretKey = propertyConfig.getSecretKey();
+        Map<String, String> param = new HashMap<>();
+        param.put("api_key", apiKey);
+        param.put("symbol", symbol);
+        param.put("order_id", orderId);
+        String sign = EncryptHelper.sign(param, secretKey, "utf-8");
+        param.put("sign", sign);
+        param.put("secret_key", secretKey);
+        String result = null;
+        try {
             result = HttpUtil.doPostSSL(orderInfoUrl, param);
+            logger.info("获取订单信息接口,请求:{},响应:{}",JsonMapper.nonDefaultMapper().toJson(param),result);
             JsonNode rootNode = objectMapper.readTree(result);
             boolean success = rootNode.get("result").asBoolean();
             if (success) {
@@ -57,7 +95,7 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
                 List<OrderInfoDTO> orderList = objectMapper.readValue(ordersStr, new TypeReference<List<OrderInfoDTO>>() {
                 });
                 logger.info("获取到订单数量:{}", orderList.size());
-                return orderList.get(0);
+                return orderList;
             } else {
                 String errorCode = rootNode.get("error_code").asText();
                 logger.info(ResponseCode.responseCode.get(errorCode));
@@ -65,7 +103,6 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        logger.info("币币交易返回:{}", result);
         return null;
     }
 }

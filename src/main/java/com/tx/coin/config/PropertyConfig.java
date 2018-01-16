@@ -35,6 +35,8 @@ public class PropertyConfig {
      * 底仓数量
      */
     private Double d1 = 500.00;
+
+    private Double d3 = 500.00;
     /**
      * 基本手数
      */
@@ -86,6 +88,14 @@ public class PropertyConfig {
 
     public void setD1(Double d1) {
         this.d1 = d1;
+    }
+
+    public Double getD3() {
+        return d3;
+    }
+
+    public void setD3(Double d3) {
+        this.d3 = d3;
     }
 
     public Double getS1() {
@@ -158,6 +168,7 @@ public class PropertyConfig {
         params.put("secretKey",getSecretKey());
         params.put("b1",getB1());
         params.put("d1",getD1());
+        params.put("d3",getD3());
         params.put("s1",getS1());
         params.put("u1",getU1());
         params.put("u2",getU2());

@@ -135,7 +135,7 @@ public class HttpUtil {
                 }
             }
         }
-        logger.info("ssl get响应:{}",httpStr);
+//        logger.info("ssl get响应:{}",httpStr);
         return httpStr;
     }
 
@@ -176,7 +176,7 @@ public class HttpUtil {
     }
 
     public static String doPostSSL(String apiUrl, Map<String,String> param) {
-        logger.info("ssl post请求:{}",JsonMapper.nonDefaultMapper().toJson(param));
+//        logger.info("ssl post请求:{}",JsonMapper.nonDefaultMapper().toJson(param));
         CloseableHttpClient httpClient = getHttpClient();
         HttpPost httpPost = new HttpPost(apiUrl);
         httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -208,7 +208,7 @@ public class HttpUtil {
                 }
             }
         }
-        logger.info("ssl post响应:{}",httpStr);
+//        logger.info("ssl post响应:{}",httpStr);
         return httpStr;
     }
 

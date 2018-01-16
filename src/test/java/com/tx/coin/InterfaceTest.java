@@ -1,10 +1,10 @@
 package com.tx.coin;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.tx.coin.dto.KLineDataDTO;
 import com.tx.coin.dto.OrderInfoDTO;
 import com.tx.coin.dto.UserInfoDTO;
 import com.tx.coin.entity.Quotations;
+import com.tx.coin.enums.OrderStateEnum;
 import com.tx.coin.enums.TimeIntervalEnum;
 import com.tx.coin.enums.TradeType;
 import com.tx.coin.service.*;
@@ -61,9 +61,22 @@ public class InterfaceTest {
     }
 
     @Test
-    public void getOrderInfo(){
-        OrderInfoDTO orderInfo = orderInfoService.getOrderInfo("123969940", 1, "etc_usdt");
+    public void getOrdersInfo(){
+        List<OrderInfoDTO> orderInfo = orderInfoService.getBatchOrdersInfo("123969940", 1, "etc_usdt");
         System.out.println(JsonMapper.nonDefaultMapper().toJson(orderInfo));
+    }
+
+    @Test
+    public void getOrderInfo(){
+        //获取未完成订单
+        List<OrderInfoDTO> orderInfo=orderInfoService.getOrderInfo("-1","etc_usdt");
+        System.out.println(OrderStateEnum.PART_DEAL.getValue());
+        for(OrderInfoDTO order:orderInfo){
+            Integer state=order.getStatus();
+            if (state== OrderStateEnum.PART_DEAL.getValue() || state == OrderStateEnum.UNDEAL.getValue()){
+                System.out.println(order.getOrderId());
+            }
+        }
     }
 
     @Test

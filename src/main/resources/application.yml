@@ -3,7 +3,8 @@ coin:
     quota: https://www.okex.com/api/v1/ticker.do?symbol=
     trade: https://www.okex.com/api/v1/trade.do
     userinfo: https://www.okex.com/api/v1/userinfo.do
-    orderinfo: https://www.okex.com/api/v1/orders_info.do
+    ordersinfo: https://www.okex.com/api/v1/orders_info.do
+    orderinfo: https://www.okex.com/api/v1/order_info.do
     cancelOrder: https://www.okex.com/api/v1/cancel_order.do
     kline: https://www.okex.com/api/v1/kline.do
 
@@ -13,16 +14,19 @@ config:
   secretKey: 8BB13B41188F9E48B45D8B91B34AF4DA
 #底仓方
   u1: etc
+#ASK方
   u2: usdt
 #底仓数量
   d1: 0
+#ASK底仓
+  d3: 0
 #基本手数
-  s1: 5
+  s1: 1
 #浮盈率
-  y1: 1.005
-  y2: 1.006
-  y3: 1.007
-  y4: 1.008
-  y5: 1.009
+  y1: 1.001
+  y2: 1.002
+  y3: 1.003
+  y4: 1.004
+  y5: 1.005
 #补仓位置
-  b1: 1.002
+  b1: 0.01

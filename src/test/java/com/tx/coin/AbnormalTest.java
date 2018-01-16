@@ -1,15 +1,20 @@
 package com.tx.coin;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tx.coin.dto.OrderInfoDTO;
 import com.tx.coin.dto.UserInfoDTO;
+import com.tx.coin.enums.OrderStateEnum;
+import com.tx.coin.service.impl.OperatorServiceImpl;
+import com.tx.coin.service.impl.OrderInfoServiceImpl;
+import com.tx.coin.utils.DateUtil;
 import com.tx.coin.utils.JsonMapper;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by 你慧快乐 on 2018-1-11.
@@ -31,5 +36,21 @@ public class AbnormalTest {
         map.put("2","tow");
         list.add(map);
         System.out.println(JsonMapper.nonDefaultMapper().toJson(list));
+    }
+
+    @Test
+    public void testDate(){
+        List<OrderInfoDTO> orderInfo=new ArrayList<>();
+        OrderInfoDTO orderInfoDTO=null;
+        for (int i=0;i<5;i++){
+            orderInfoDTO=new OrderInfoDTO();
+            orderInfoDTO.setStatus(OrderStateEnum.PART_DEAL.getValue());
+            orderInfoDTO.setOrderId(RandomStringUtils.random(10,true,true));
+            orderInfo.add(orderInfoDTO);
+        }
+        String[] ids=OperatorServiceImpl.getCancelOrders(orderInfo);
+        for(String id:ids){
+            System.out.println(id);
+        }
     }
 }

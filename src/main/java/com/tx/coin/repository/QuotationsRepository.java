@@ -20,4 +20,5 @@ public interface QuotationsRepository extends JpaRepository<Quotations, Integer>
 
     @Query(value = "SELECT q.last FROM quotations q WHERE q.symbol=:symbol ORDER BY q.date desc LIMIT :pageSize", nativeQuery = true)
     List<Double> getLastPriceBySymbolOrderByDate(@Param("symbol") String symbol, @Param("pageSize") int size);
+
 }
