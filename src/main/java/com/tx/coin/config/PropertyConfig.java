@@ -24,6 +24,10 @@ public class PropertyConfig {
 
     private String secretKey;
     /**
+     * 是否交易
+     */
+    private Boolean tradeOrNot;
+    /**
      * 底仓方
      */
     private String u1;
@@ -34,17 +38,17 @@ public class PropertyConfig {
     /**
      * 底仓数量
      */
-    private Double d1 = 500.00;
+    private Double d1 ;
 
-    private Double d3 = 500.00;
+    private Double d3 ;
     /**
      * 基本手数
      */
-    private Double s1 = 100.00;
+    private Double s1 ;
     /**
      * 浮盈率
      */
-    private Double y1 = 1.05, y2 = 1.06, y3 = 1.07, y4 = 1.08, y5 = 1.09;
+    private Double y1 , y2 , y3 , y4 , y5 ;
     /**
      * 补仓位置
      */
@@ -156,6 +160,14 @@ public class PropertyConfig {
 
     private Logger logger= LoggerFactory.getLogger(PropertyConfig.class);
 
+    public Boolean getTradeOrNot(){
+        return tradeOrNot;
+    }
+
+    public void setTradeOrNot(Boolean tradeOrNot) {
+        this.tradeOrNot = tradeOrNot;
+    }
+
     @Override
     public String toString() {
         Map<String,Object> params=getParams();
@@ -177,6 +189,7 @@ public class PropertyConfig {
         params.put("y3",getY3());
         params.put("y4",getY4());
         params.put("y5",getY5());
+        params.put("isTrade",getTradeOrNot());
         return params;
     }
 

@@ -30,3 +30,5 @@ config:
   y5: 1.005
 #补仓位置
   b1: 0.01
+
+  tradeOrNot: false

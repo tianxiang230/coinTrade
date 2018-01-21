@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>管理后台-配置</title>
+    <script src="/webjars/jquery/1.11.1/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/webjars/bootstrap/3.3.7/css/bootstrap.min.css"/>
+</head>
+<body>
+<div class="container"><br/>
+    <div style="position: fixed;right: 10%;"><a class='btn btn-primary ' href="logout">退出</a></div>
+    <div class="col-sm-offset-4 col-sm-4">
+        <form class="form-horizontal" method="post">
+            <fieldset>
+                <div id="legend" class="">
+                    <legend class="">编辑配置</legend>
+                </div>
+                <div class="form-group">
+                    <!-- Text input-->
+                    <label class="control-label col-sm-2" th:label="u1">U1：</label>
+                    <div class="controls col-sm-10">
+                        <input type="text" placeholder="底仓方" th:value="${config.u1}" name="u1" id="u1" class="form-control"/>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+
+                    <!-- Text input-->
+                    <label class="control-label col-sm-2" th:label="u2">U2：</label>
+                    <div class="controls col-sm-10">
+                        <input type="text" placeholder="ASK方" th:value="${config.u2}" name="u2" class="form-control"/>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+
+                    <!-- Text input-->
+                    <label class="control-label col-sm-2" th:label="d1">D1：</label>
+                    <div class="controls col-sm-10">
+                        <input type="text" placeholder="底仓数量" th:value="${config.d1}" name="d1" class="form-control"/>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+
+                    <!-- Text input-->
+                    <label class="control-label col-sm-2" th:label="d3">D3：</label>
+                    <div class="controls col-sm-10">
+                        <input type="text" placeholder="ASK方底仓" th:value="${config.d3}" name="d3" class="form-control"/>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+
+                    <!-- Text input-->
+                    <label class="control-label col-sm-2" th:label="s1">S1：</label>
+                    <div class="controls col-sm-10">
+                        <input type="text" placeholder="基本手数" th:value="${config.s1}" name="s1" class="form-control"/>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+
+                    <!-- Text input-->
+                    <label class="control-label col-sm-2" th:label="b1">B1:</label>
+                    <div class="controls col-sm-10">
+                        <input type="text" placeholder="补仓位置" th:value="${config.b1}" name="b1" class="form-control"/>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+                <div class="form-group">
+
+                    <!-- Text input-->
+                    <label class="control-label col-sm-2" th:label="y1">Y1:</label>
+                    <div class="controls col-sm-10">
+                        <input type="text" placeholder="浮盈率" th:value="${config.y1}" name="y1" class="form-control"/>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+
+                    <!-- Search input-->
+                    <label class="control-label col-sm-2" th:label="y2">Y2:</label>
+                    <div class="controls col-sm-10">
+                        <input type="text" placeholder="浮盈率" th:value="${config.y2}" name="y2"
+                               class="form-control search-query"/>
+                        <p class="help-block"></p>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+
+                    <!-- Text input-->
+                    <label class="control-label col-sm-2" th:label="y3">Y3:</label>
+                    <div class="controls col-sm-10">
+                        <input type="text" placeholder="浮盈率" th:value="${config.y3}" name="y3" class="form-control"/>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+                <div class="form-group">
+
+                    <!-- Text input-->
+                    <label class="control-label col-sm-2" th:label="y4">Y4:</label>
+                    <div class="controls col-sm-10">
+                        <input type="text" placeholder="浮盈率" th:value="${config.y4}" name="y4" class="form-control"/>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <!-- Text input-->
+                    <label class="control-label col-sm-2" th:label="y5">Y5:</label>
+                    <div class="controls col-sm-10">
+                        <input type="text" placeholder="浮盈率" th:value="${config.y5}" name="y5" class="form-control"/>
+                        <p class="help-block"></p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-6"  th:label="isTrade">是否交易：</label>
+                    <div class="col-sm-6" style="padding-top:7px;">
+                        <input type="radio" name="tradeOrNot" id="radio1" value="true" th:checked="${config.tradeOrNot==true}" /> 是
+                        <input type="radio" name="tradeOrNot" id="radio2" value="false" th:checked="${config.tradeOrNot==false}" /> 否
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-default col-sm-offset-4 col-sm-4">提交</button>
+                </div>
+
+            </fieldset>
+        </form>
+    </div>
+</div>
+</body>
+</html>

@@ -1,6 +1,7 @@
 package com.tx.coin.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tx.coin.config.PropertyConfig;
 import com.tx.coin.dto.QuotationsDTO;
 import com.tx.coin.entity.Quotations;
 import com.tx.coin.repository.QuotationsRepository;
@@ -26,6 +27,8 @@ public class CoinQuotationsServiceImpl implements ICoinQuotationService {
     private String remoteUrl;
     @Autowired
     private QuotationsRepository quotationsRepository;
+    @Autowired
+    private PropertyConfig propertyConfig;
     private final int DATA_SIZE = 20;
 
     private Logger logger = LoggerFactory.getLogger(CoinQuotationsServiceImpl.class);
@@ -49,7 +52,8 @@ public class CoinQuotationsServiceImpl implements ICoinQuotationService {
     public List<Double> getLocalNewPrice(String symbol) {
         List<Double> list = quotationsRepository.getLastPriceBySymbolOrderByDate(symbol, DATA_SIZE);
         if (list.size() < DATA_SIZE) {
-            throw new RuntimeException("抓取数据不足" + DATA_SIZE);
+            propertyConfig.setTradeOrNot(false);
+            throw new RuntimeException("抓取数据不足,自动关闭交易" + DATA_SIZE);
         }
         return list;
     }
@@ -66,7 +70,8 @@ public class CoinQuotationsServiceImpl implements ICoinQuotationService {
             list.add(lastPrice);
         }
         if (list.size() < DATA_SIZE) {
-            throw new RuntimeException("抓取数据不足" + DATA_SIZE);
+            propertyConfig.setTradeOrNot(false);
+            throw new RuntimeException("抓取数据不足,自动关闭交易" + DATA_SIZE);
         }
         return list;
     }

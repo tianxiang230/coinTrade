@@ -8,6 +8,7 @@ import com.tx.coin.enums.OrderStateEnum;
 import com.tx.coin.service.impl.OperatorServiceImpl;
 import com.tx.coin.service.impl.OrderInfoServiceImpl;
 import com.tx.coin.utils.DateUtil;
+import com.tx.coin.utils.HttpUtil;
 import com.tx.coin.utils.JsonMapper;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -52,5 +53,12 @@ public class AbnormalTest {
         for(String id:ids){
             System.out.println(id);
         }
+    }
+
+    @Test
+    public void test(){
+        String url="https://www.steamrepcn.com/profiles/76561198433664529/content";
+        String result=HttpUtil.doGetSSL(url,null);
+        System.out.println(result);
     }
 }

@@ -46,8 +46,8 @@ public class CoinTradeServiceImpl implements ICoinTradeService {
 
     @Override
     public String coinTrade(String symbol, TradeType tradeType, double price, double amount) {
-        if (StringUtils.isNotBlank(symbol)|| price<=0|| amount<=0){
-            logger.info("交易参数不合法,symbol:{},price:{},amount:{}",new Object[]{symbol,price,amount});
+        if (StringUtils.isBlank(symbol) || price <= 0 || amount <= 0) {
+            logger.info("交易参数不合法,symbol:{},price:{},amount:{}", new Object[]{symbol, price, amount});
             return null;
         }
         if (price == 0 || amount == 0) {
@@ -67,7 +67,7 @@ public class CoinTradeServiceImpl implements ICoinTradeService {
         param.put("sign", sign);
         param.put("secret_key", secretKey);
         String result = HttpUtil.doPostSSL(tradeUrl, param);
-        logger.info("币币交易请求参数:{},响应:{}",JsonMapper.nonDefaultMapper().toJson(param),result);
+        logger.info("币币交易请求参数:{},响应:{}", JsonMapper.nonDefaultMapper().toJson(param), result);
         try {
             boolean state = false;
             JsonNode resultNode = mapper.readTree(result).get("result");
@@ -96,8 +96,8 @@ public class CoinTradeServiceImpl implements ICoinTradeService {
 
     @Override
     public boolean cancelTrade(String symbol, String orderId) {
-        if (StringUtils.isNotBlank(symbol) || StringUtils.isNotBlank(orderId)){
-            logger.info("取消订单,缺少必要参数,symbol:{},orderId:{}",symbol,orderId);
+        if (StringUtils.isBlank(symbol) || StringUtils.isBlank(orderId)) {
+            logger.info("取消订单,缺少必要参数,symbol:{},orderId:{}", symbol, orderId);
             return false;
         }
         String secretKey = propertyConfig.getSecretKey();
@@ -110,19 +110,19 @@ public class CoinTradeServiceImpl implements ICoinTradeService {
         param.put("secret_key", secretKey);
         String result = null;
         result = HttpUtil.doPostSSL(cancelOrderUrl, param);
-        logger.info("取消订单操作,请求参数:{},响应:{}", JsonMapper.nonDefaultMapper().toJson(param),result);
+        logger.info("取消订单操作,请求参数:{},响应:{}", JsonMapper.nonDefaultMapper().toJson(param), result);
         try {
-            JsonNode successNode=mapper.readTree(result).get("success");
-            if (successNode==null){
+            JsonNode successNode = mapper.readTree(result).get("success");
+            if (successNode == null) {
                 Integer errorCode = mapper.readTree(result).get("error_code").asInt();
                 logger.info(ResponseCode.responseCode.get(errorCode));
                 return false;
             }
             String successOrders = mapper.readTree(result).get("success").toString();
-            String failOrders=mapper.readTree(result).get("error").toString();
-            logger.info("撤销成功订单:{},失败订单:{}",successOrders,failOrders);
-            if (StringUtils.isNotBlank(failOrders)){
-                return cancelTrade(symbol,failOrders);
+            String failOrders = mapper.readTree(result).get("error").toString();
+            logger.info("撤销成功订单:{},失败订单:{}", successOrders, failOrders);
+            if (StringUtils.isNotBlank(failOrders)) {
+                return cancelTrade(symbol, failOrders);
             }
         } catch (IOException e) {
             logger.info("撤单交易发生异常，异常信息:{}", ExceptionUtils.getStackTrace(e));

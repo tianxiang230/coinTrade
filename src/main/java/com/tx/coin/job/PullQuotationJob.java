@@ -42,7 +42,9 @@ public class PullQuotationJob {
         if (quotations != null) {
             logger.info("存入最新行情成功");
         }
-        //执行交易流程
+        if (propertyConfig.getTradeOrNot()) {
+            //执行交易流程
         operatorService.operate();
+        }
     }
 }

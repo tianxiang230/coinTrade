@@ -53,6 +53,7 @@ public class OperatorServiceImpl implements IOperatorService {
     public void operate() {
         String symbol = propertyConfig.getU1() + "_" + propertyConfig.getU2();
         List<Double> prices = quotationService.getLocalNewPrice(symbol);
+
         //前20个价格均值
         double mb = MathUtil.avg(prices);
         //取得标准差
@@ -103,7 +104,26 @@ public class OperatorServiceImpl implements IOperatorService {
                     for (String orders : successOrderIds) {
                         tradeService.cancelTrade(symbol, orders);
                     }
+                    //取消订单后重新获取余额
+                    userInfo = userInfoService.getUserInfo();
+                    try {
+                        userInfoMap = BeanUtils.describe(userInfo);
+                    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                        e.printStackTrace();
+                    }
+                    if (userInfoMap != null) {
+                        //底仓方账户余额
+                        d2 = Double.valueOf(userInfoMap.get(propertyConfig.getU1()).toString());
+                        if (d2 == null) {
+                            logger.info("重新获取{}余额失败", propertyConfig.getU1());
+                            return;
+                        } else {
+                            logger.info("重新获取{}余额为:{}", propertyConfig.getU1(), decimalFormat.format(d2));
+                        }
+                    }
+                    //重新获取余额结束
                 }
+
                 buy(symbol, d2, lb);
                 //5秒后卖出
                 try {
