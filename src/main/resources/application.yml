@@ -29,6 +29,6 @@ config:
   y4: 1.004
   y5: 1.005
 #补仓位置
-  b1: 0.01
+  b1: 0.99
 
   tradeOrNot: false

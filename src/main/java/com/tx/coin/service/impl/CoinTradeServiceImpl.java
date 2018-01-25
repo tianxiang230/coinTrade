@@ -46,6 +46,7 @@ public class CoinTradeServiceImpl implements ICoinTradeService {
 
     @Override
     public String coinTrade(String symbol, TradeType tradeType, double price, double amount) {
+        logger.info(String.format("执行交易[%s]操作,交易币种[%s],价格[%f],交易量[%f]", tradeType.getName(), symbol, price, amount));
         if (StringUtils.isBlank(symbol) || price <= 0 || amount <= 0) {
             logger.info("交易参数不合法,symbol:{},price:{},amount:{}", new Object[]{symbol, price, amount});
             return null;
@@ -54,10 +55,10 @@ public class CoinTradeServiceImpl implements ICoinTradeService {
             logger.info("交易价格或交易量为0,禁止交易");
             return null;
         }
-        price = new BigDecimal(price).setScale(8, BigDecimal.ROUND_HALF_UP).doubleValue();
+        price = new BigDecimal(price).setScale(8, BigDecimal.ROUND_HALF_DOWN).doubleValue();
         String orderId = null;
         String secretKey = propertyConfig.getSecretKey();
-        Map<String, String> param = new HashMap<>();
+        Map<String, String> param = new HashMap<>(10);
         param.put("api_key", propertyConfig.getApiKey());
         param.put("symbol", symbol);
         param.put("type", tradeType.getCode());
@@ -86,7 +87,7 @@ public class CoinTradeServiceImpl implements ICoinTradeService {
             } else {
                 orderRecord = new OrderRecord(symbol, tradeType, OrderType.NOT_COMPLETE, price, amount);
             }
-            logger.info(String.format("执行交易[%s]操作,交易币种[%s],价格[%f],交易量[%f]", tradeType.getName(), symbol, price, amount));
+
             orderRecordRepository.save(orderRecord);
         } catch (IOException e) {
             logger.info("交易发生异常，异常信息:{}", ExceptionUtils.getStackTrace(e));
@@ -114,6 +115,10 @@ public class CoinTradeServiceImpl implements ICoinTradeService {
         try {
             JsonNode successNode = mapper.readTree(result).get("success");
             if (successNode == null) {
+                JsonNode resultNode = mapper.readTree(result).get("result");
+                if (resultNode != null && resultNode.asBoolean()) {
+                    return true;
+                }
                 Integer errorCode = mapper.readTree(result).get("error_code").asInt();
                 logger.info(ResponseCode.responseCode.get(errorCode));
                 return false;

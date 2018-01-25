@@ -35,7 +35,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
     public UserInfoDTO getUserInfo() {
         String apiKey= propertyConfig.getApiKey();
         String secretKey= propertyConfig.getSecretKey();
-        Map<String,String> param=new HashMap<>();
+        Map<String,String> param=new HashMap<>(5);
         param.put("api_key",apiKey);
         String sign = EncryptHelper.sign(param,secretKey,"utf-8");
         param.put("secret_key",secretKey);

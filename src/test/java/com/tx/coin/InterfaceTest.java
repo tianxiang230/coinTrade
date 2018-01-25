@@ -8,6 +8,7 @@ import com.tx.coin.enums.OrderStateEnum;
 import com.tx.coin.enums.TimeIntervalEnum;
 import com.tx.coin.enums.TradeType;
 import com.tx.coin.service.*;
+import com.tx.coin.service.impl.OperatorServiceImpl;
 import com.tx.coin.utils.JsonMapper;
 import com.tx.coin.ws.api.ITradeRecordWsService;
 import org.junit.Test;
@@ -92,5 +93,11 @@ public class InterfaceTest {
         calendar.set(Calendar.DATE,11);
         List<KLineDataDTO> list= ikLineService.pullLineData("etc_btc", TimeIntervalEnum.ONE_HOUR,100,calendar.getTime());
         System.out.println(JsonMapper.nonDefaultMapper().toJson(list));
+    }
+
+    @Test
+    public void getCancleOrder(){
+        String[] successOrderIds = OperatorServiceImpl.getCancelOrders(orderInfoService.getOrderInfo("-1", "etc_usdt"));
+        System.out.println(JsonMapper.nonDefaultMapper().toJson(successOrderIds));
     }
 }

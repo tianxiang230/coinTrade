@@ -57,8 +57,11 @@ public class AbnormalTest {
 
     @Test
     public void test(){
-        String url="https://www.steamrepcn.com/profiles/76561198433664529/content";
-        String result=HttpUtil.doGetSSL(url,null);
-        System.out.println(result);
+        double a=1.00060403;
+        double b=a/5;
+        System.out.println(a);
+        System.out.println(b);
+        System.out.println(a-b*4);
+
     }
 }

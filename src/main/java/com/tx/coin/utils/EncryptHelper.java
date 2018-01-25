@@ -4,12 +4,12 @@ package com.tx.coin.utils;
  * Created by guotx on 2017/10/12.
  */
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 /**
@@ -98,18 +98,16 @@ public class EncryptHelper {
             String needSignString = joinCollectionToString(toSortSet(map, "="));
             String sign = null;
             if (null == secretKey || "".equals(secretKey)) {
-                sign = EncryptHelper.md5(needSignString, enc);
                 logger.info("加密前字符串为:{}", needSignString);
+                sign = EncryptHelper.md5(needSignString, enc);
             } else {
                 String preSign = needSignString + "&secret_key=" + secretKey;
                 logger.info("加密前字符串为:{}", preSign);
                 sign = EncryptHelper.md5(preSign, enc);
             }
             return sign.toUpperCase();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("签名发生错误,{}", ExceptionUtils.getStackTrace(e));
         }
         return null;
     }

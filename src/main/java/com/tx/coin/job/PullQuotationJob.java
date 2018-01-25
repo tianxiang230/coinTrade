@@ -44,7 +44,8 @@ public class PullQuotationJob {
         }
         if (propertyConfig.getTradeOrNot()) {
             //执行交易流程
-        operatorService.operate();
+            operatorService.operate();
         }
+        logger.info("执行Job完成");
     }
 }
