@@ -1,10 +1,10 @@
 package com.tx.coin.job;
 
-import com.tx.coin.config.PropertyConfig;
+import com.tx.coin.config.OkxePropertyConfig;
 import com.tx.coin.entity.Quotations;
 import com.tx.coin.repository.QuotationsRepository;
-import com.tx.coin.service.ICoinQuotationService;
-import com.tx.coin.service.IOperatorService;
+import com.tx.coin.service.okxe.ICoinQuotationService;
+import com.tx.coin.service.okxe.IOperatorService;
 import com.tx.coin.utils.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,7 @@ import java.util.Date;
  * Created by 你慧快乐 on 2018-1-9.
  */
 @Component
-public class PullQuotationJob {
+public class PullOkxeQuotationJob {
 
     @Autowired
     private ICoinQuotationService quotationService;
@@ -28,13 +28,13 @@ public class PullQuotationJob {
     @Autowired
     private IOperatorService operatorService;
     @Autowired
-    private PropertyConfig propertyConfig;
-    private Logger logger = LoggerFactory.getLogger(PullQuotationJob.class);
+    private OkxePropertyConfig okxePropertyConfig;
+    private Logger logger = LoggerFactory.getLogger(PullOkxeQuotationJob.class);
 
     //    @Scheduled(cron = "0 0/5 * * * ?")
     @Scheduled(cron = "0 0/15 * * * ?")
     public void execute() {
-        final String symbol = propertyConfig.getU1() + "_" + propertyConfig.getU2();
+        final String symbol = okxePropertyConfig.getU1() + "_" + okxePropertyConfig.getU2();
         Quotations quotations = quotationService.getQuotation(symbol);
         quotations.setSymbol(symbol);
         quotations.setCreateDate(DateUtil.getFormatDateTime(new Date()));
@@ -42,7 +42,7 @@ public class PullQuotationJob {
         if (quotations != null) {
             logger.info("存入最新行情成功");
         }
-        if (propertyConfig.getTradeOrNot()) {
+        if (okxePropertyConfig.getTradeOrNot()) {
             //执行交易流程
             operatorService.operate();
         }

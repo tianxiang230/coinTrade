@@ -1,20 +1,17 @@
 package com.tx.coin;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tx.coin.dto.OrderInfoDTO;
 import com.tx.coin.dto.UserInfoDTO;
 import com.tx.coin.enums.OrderStateEnum;
-import com.tx.coin.service.impl.OperatorServiceImpl;
-import com.tx.coin.service.impl.OrderInfoServiceImpl;
-import com.tx.coin.utils.DateUtil;
-import com.tx.coin.utils.HttpUtil;
+import com.tx.coin.service.okxe.impl.OperatorServiceImpl;
 import com.tx.coin.utils.JsonMapper;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -57,11 +54,9 @@ public class AbnormalTest {
 
     @Test
     public void test(){
-        double a=1.00060403;
-        double b=a/5;
-        System.out.println(a);
-        System.out.println(b);
-        System.out.println(a-b*4);
+        DecimalFormat decimalFormat = new DecimalFormat("####.########");
+        decimalFormat.setRoundingMode(RoundingMode.DOWN);
+        System.out.println(decimalFormat.format(2.34564376587));
 
     }
 }

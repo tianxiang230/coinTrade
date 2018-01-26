@@ -1,11 +1,11 @@
-package com.tx.coin.service.impl;
+package com.tx.coin.service.okxe.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tx.coin.config.PropertyConfig;
+import com.tx.coin.config.OkxePropertyConfig;
 import com.tx.coin.dto.KLineDataDTO;
 import com.tx.coin.enums.TimeIntervalEnum;
-import com.tx.coin.service.IKLineService;
+import com.tx.coin.service.okxe.IKLineService;
 import com.tx.coin.utils.EncryptHelper;
 import com.tx.coin.utils.HttpUtil;
 import com.tx.coin.utils.IteratorUtils;
@@ -29,7 +29,7 @@ import java.util.*;
 @Service
 public class KLineServiceImpl implements IKLineService {
     @Autowired
-    private PropertyConfig propertyConfig;
+    private OkxePropertyConfig okxePropertyConfig;
     @Value("${coin.remote.kline}")
     private String klineUrl;
 
@@ -39,8 +39,8 @@ public class KLineServiceImpl implements IKLineService {
 
     @Override
     public List<KLineDataDTO> pullLineData(String symbol, TimeIntervalEnum intervalTye, int size, Date since) {
-        String apiKey = propertyConfig.getApiKey();
-        String secretKey = propertyConfig.getSecretKey();
+        String apiKey = okxePropertyConfig.getApiKey();
+        String secretKey = okxePropertyConfig.getSecretKey();
         Map<String, String> param = new HashMap<>(15);
         param.put("api_key", apiKey);
         param.put("symbol", symbol);

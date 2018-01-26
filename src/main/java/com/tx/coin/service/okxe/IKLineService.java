@@ -1,4 +1,4 @@
-package com.tx.coin.service;
+package com.tx.coin.service.okxe;
 
 import com.tx.coin.dto.KLineDataDTO;
 import com.tx.coin.enums.TimeIntervalEnum;

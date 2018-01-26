@@ -1,14 +1,14 @@
-package com.tx.coin.service.impl;
+package com.tx.coin.service.okxe.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tx.coin.config.PropertyConfig;
+import com.tx.coin.config.OkxePropertyConfig;
 import com.tx.coin.entity.OrderRecord;
 import com.tx.coin.enums.OrderType;
 import com.tx.coin.enums.ResponseCode;
 import com.tx.coin.enums.TradeType;
 import com.tx.coin.repository.OrderRecordRepository;
-import com.tx.coin.service.ICoinTradeService;
+import com.tx.coin.service.okxe.ICoinTradeService;
 import com.tx.coin.utils.EncryptHelper;
 import com.tx.coin.utils.HttpUtil;
 import com.tx.coin.utils.JsonMapper;
@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +33,7 @@ import java.util.Map;
 @Service
 public class CoinTradeServiceImpl implements ICoinTradeService {
     @Autowired
-    private PropertyConfig propertyConfig;
+    private OkxePropertyConfig okxePropertyConfig;
     @Autowired
     private OrderRecordRepository orderRecordRepository;
     @Value("${coin.remote.trade}")
@@ -42,10 +43,12 @@ public class CoinTradeServiceImpl implements ICoinTradeService {
     private ObjectMapper mapper = new ObjectMapper();
     private DecimalFormat decimalFormat = new DecimalFormat("####.########");
 
+
     Logger logger = LoggerFactory.getLogger(CoinQuotationsServiceImpl.class);
 
     @Override
     public String coinTrade(String symbol, TradeType tradeType, double price, double amount) {
+        decimalFormat.setRoundingMode(RoundingMode.DOWN);
         logger.info(String.format("执行交易[%s]操作,交易币种[%s],价格[%f],交易量[%f]", tradeType.getName(), symbol, price, amount));
         if (StringUtils.isBlank(symbol) || price <= 0 || amount <= 0) {
             logger.info("交易参数不合法,symbol:{},price:{},amount:{}", new Object[]{symbol, price, amount});
@@ -57,9 +60,9 @@ public class CoinTradeServiceImpl implements ICoinTradeService {
         }
         price = new BigDecimal(price).setScale(8, BigDecimal.ROUND_HALF_DOWN).doubleValue();
         String orderId = null;
-        String secretKey = propertyConfig.getSecretKey();
+        String secretKey = okxePropertyConfig.getSecretKey();
         Map<String, String> param = new HashMap<>(10);
-        param.put("api_key", propertyConfig.getApiKey());
+        param.put("api_key", okxePropertyConfig.getApiKey());
         param.put("symbol", symbol);
         param.put("type", tradeType.getCode());
         param.put("price", decimalFormat.format(price));
@@ -84,6 +87,7 @@ public class CoinTradeServiceImpl implements ICoinTradeService {
             if (state) {
                 orderId = mapper.readTree(result).get("order_id").toString();
                 orderRecord = new OrderRecord(symbol, tradeType, OrderType.COMPLETED, price, amount);
+                orderRecord.setOrderId(orderId);
             } else {
                 orderRecord = new OrderRecord(symbol, tradeType, OrderType.NOT_COMPLETE, price, amount);
             }
@@ -101,9 +105,9 @@ public class CoinTradeServiceImpl implements ICoinTradeService {
             logger.info("取消订单,缺少必要参数,symbol:{},orderId:{}", symbol, orderId);
             return false;
         }
-        String secretKey = propertyConfig.getSecretKey();
+        String secretKey = okxePropertyConfig.getSecretKey();
         Map<String, String> param = new HashMap<>();
-        param.put("api_key", propertyConfig.getApiKey());
+        param.put("api_key", okxePropertyConfig.getApiKey());
         param.put("symbol", symbol);
         param.put("order_id", orderId);
         String sign = EncryptHelper.sign(param, secretKey, "utf-8");

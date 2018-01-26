@@ -1,6 +1,6 @@
 package com.tx.coin.ws.api.impl;
 
-import com.tx.coin.config.PropertyConfig;
+import com.tx.coin.config.OkxePropertyConfig;
 import com.tx.coin.utils.EncryptHelper;
 import com.tx.coin.ws.WebSocketClient;
 import com.tx.coin.ws.api.ITradeRecordWsService;
@@ -28,7 +28,7 @@ import java.util.Map;
 @Service
 public class TradeRecordServiceImpl implements ITradeRecordWsService {
     @Autowired
-    private PropertyConfig propertyConfig;
+    private OkxePropertyConfig okxePropertyConfig;
     Logger logger = LoggerFactory.getLogger(TradeRecordServiceImpl.class);
 
     @Override
@@ -46,14 +46,14 @@ public class TradeRecordServiceImpl implements ITradeRecordWsService {
             e.printStackTrace();
         }
         Map<String, String> param = new HashMap<>(6);
-        param.put("api_key", propertyConfig.getApiKey());
-        String sign = EncryptHelper.sign(param, propertyConfig.getSecretKey(), "utf-8");
+        param.put("api_key", okxePropertyConfig.getApiKey());
+        String sign = EncryptHelper.sign(param, okxePropertyConfig.getSecretKey(), "utf-8");
         param.put("sign", sign);
 
         StringBuilder params = new StringBuilder("{'event':'addChannel','channel':'ok_sub_spot_");
         params.append(symbol);
         params.append("_deals','parameters':{'api_key':'");
-        params.append(propertyConfig.getApiKey()).append("','sign':'");
+        params.append(okxePropertyConfig.getApiKey()).append("','sign':'");
         params.append(sign).append("'}}");
         logger.info("订阅交易行情发送数据:{}", params.toString());
         client.send(params.toString());

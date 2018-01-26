@@ -1,18 +1,16 @@
-package com.tx.coin.service.impl;
-
-import com.tx.coin.service.IPriceService;
-import com.tx.coin.utils.MathUtil;
-import org.springframework.stereotype.Component;
+package com.tx.coin.utils;
 
 import java.util.List;
 
 /**
- * Created by 你慧快乐 on 2018-1-11.
+ * @author 你慧快乐
+ * @version V1.0
+ * @Package com.tx.coin.utils
+ * @Description 价格计算工具
+ * @date 2018-1-26 18:42
  */
-@Component
-public class PriceServiceImpl implements IPriceService {
-    @Override
-    public double calcuMd(List<Double> priceList) {
+public class PriceUtil {
+    public static double calcuMd(List<Double> priceList) {
         if (priceList == null || priceList.size() != 20) {
             throw new IllegalArgumentException("收盘价格数不足");
         }

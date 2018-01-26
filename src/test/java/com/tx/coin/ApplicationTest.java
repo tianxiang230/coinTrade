@@ -6,9 +6,8 @@ import com.tx.coin.enums.OrderType;
 import com.tx.coin.enums.TradeType;
 import com.tx.coin.repository.OrderRecordRepository;
 import com.tx.coin.repository.QuotationsRepository;
-import com.tx.coin.service.IPriceService;
-import com.tx.coin.utils.DateUtil;
 import com.tx.coin.utils.JsonMapper;
+import com.tx.coin.utils.PriceUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,8 +27,6 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ApplicationTest {
-    @Autowired
-    IPriceService priceService;
 
     @Autowired
     OrderRecordRepository orderRecordRepository;
@@ -63,7 +59,7 @@ public class ApplicationTest {
         Double[] x = {31.45,32.0,32.555,32.347,32.376,31.694,32.106,32.402,32.916,32.834,33.457,32.982,33.291,33.261,33.532,33.531,33.348,33.303,33.591,33.611};
         priceList=Arrays.asList(x);
         System.out.println(priceList.size());
-        double price=priceService.calcuMd(priceList);
+        double price= PriceUtil.calcuMd(priceList);
         System.out.println(price);
     }
 

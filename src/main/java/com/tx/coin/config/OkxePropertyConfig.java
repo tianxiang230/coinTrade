@@ -17,8 +17,8 @@ import java.util.Map;
  */
 @PropertySource(value = "classpath:/application.yml",ignoreResourceNotFound=true)
 @Configuration
-@ConfigurationProperties(prefix = "config")
-public class PropertyConfig {
+@ConfigurationProperties(prefix = "config.okxe")
+public class OkxePropertyConfig {
 
     private String apiKey;
 
@@ -158,7 +158,7 @@ public class PropertyConfig {
         this.b1 = b1;
     }
 
-    private Logger logger= LoggerFactory.getLogger(PropertyConfig.class);
+    private Logger logger= LoggerFactory.getLogger(OkxePropertyConfig.class);
 
     public Boolean getTradeOrNot(){
         return tradeOrNot;
@@ -195,6 +195,6 @@ public class PropertyConfig {
 
     @PostConstruct
     public void complete(){
-        logger.info("创建配置参数完成:{}", toString());
+        logger.info("创建OKXE配置参数完成:{}", toString());
     }
 }

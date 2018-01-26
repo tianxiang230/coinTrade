@@ -1,4 +1,4 @@
-package com.tx.coin.service;
+package com.tx.coin.service.okxe;
 
 import com.tx.coin.enums.TradeType;
 

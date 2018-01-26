@@ -1,12 +1,12 @@
-package com.tx.coin.service.impl;
+package com.tx.coin.service.okxe.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tx.coin.config.PropertyConfig;
+import com.tx.coin.config.OkxePropertyConfig;
 import com.tx.coin.dto.OrderInfoDTO;
 import com.tx.coin.enums.ResponseCode;
-import com.tx.coin.service.IOrderInfoService;
+import com.tx.coin.service.okxe.IOrderInfoService;
 import com.tx.coin.utils.EncryptHelper;
 import com.tx.coin.utils.HttpUtil;
 import com.tx.coin.utils.JsonMapper;
@@ -27,7 +27,7 @@ import java.util.Map;
 @Service
 public class OrderInfoServiceImpl implements IOrderInfoService {
     @Autowired
-    private PropertyConfig propertyConfig;
+    private OkxePropertyConfig okxePropertyConfig;
 
     @Value("${coin.remote.ordersinfo}")
     private String ordersInfoUrl;
@@ -39,8 +39,8 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 
     @Override
     public List<OrderInfoDTO> getBatchOrdersInfo(String orderId, int type, String symbol) {
-        String apiKey = propertyConfig.getApiKey();
-        String secretKey = propertyConfig.getSecretKey();
+        String apiKey = okxePropertyConfig.getApiKey();
+        String secretKey = okxePropertyConfig.getSecretKey();
         Map<String, String> param = new HashMap<>();
         param.put("api_key", apiKey);
         param.put("symbol", symbol);
@@ -74,8 +74,8 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
 
     @Override
     public List<OrderInfoDTO> getOrderInfo(String orderId, String symbol) {
-        String apiKey = propertyConfig.getApiKey();
-        String secretKey = propertyConfig.getSecretKey();
+        String apiKey = okxePropertyConfig.getApiKey();
+        String secretKey = okxePropertyConfig.getSecretKey();
         Map<String, String> param = new HashMap<>();
         param.put("api_key", apiKey);
         param.put("symbol", symbol);
