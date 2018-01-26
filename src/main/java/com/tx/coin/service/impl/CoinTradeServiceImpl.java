@@ -46,6 +46,7 @@ public class CoinTradeServiceImpl implements ICoinTradeService {
 
     @Override
     public String coinTrade(String symbol, TradeType tradeType, double price, double amount) {
+        decimalFormat.setRoundingMode(RoundingMode.DOWN);
         logger.info(String.format("执行交易[%s]操作,交易币种[%s],价格[%f],交易量[%f]", tradeType.getName(), symbol, price, amount));
         if (StringUtils.isBlank(symbol) || price <= 0 || amount <= 0) {
             logger.info("交易参数不合法,symbol:{},price:{},amount:{}", new Object[]{symbol, price, amount});
@@ -84,6 +85,7 @@ public class CoinTradeServiceImpl implements ICoinTradeService {
             if (state) {
                 orderId = mapper.readTree(result).get("order_id").toString();
                 orderRecord = new OrderRecord(symbol, tradeType, OrderType.COMPLETED, price, amount);
+                orderRecord.setOrderId(orderId);
             } else {
                 orderRecord = new OrderRecord(symbol, tradeType, OrderType.NOT_COMPLETE, price, amount);
             }
