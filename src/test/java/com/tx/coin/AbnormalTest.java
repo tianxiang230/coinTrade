@@ -59,4 +59,11 @@ public class AbnormalTest {
         System.out.println(decimalFormat.format(2.34564376587));
 
     }
+
+    @Test
+    public void testHttp(){
+        String url="https://www.baidu.com";
+        String result =  HttpUtil.doGetSSL(url,null);
+        System.out.println(result);
+    }
 }

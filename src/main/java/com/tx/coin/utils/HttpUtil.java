@@ -20,6 +20,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,11 +39,11 @@ import java.util.Map;
 public class HttpUtil {
     static PoolingHttpClientConnectionManager cm = null;
     private static RequestConfig requestConfig;
-    private static final int MAX_TIMEOUT = 7000;
+    private static final int MAX_TIMEOUT = 3000;
 
-    private static Logger logger= LoggerFactory.getLogger(HttpUtil.class);
+    private static Logger logger = LoggerFactory.getLogger(HttpUtil.class);
 
-    public void init() {
+    private static void init() {
         LayeredConnectionSocketFactory sslsf = null;
         try {
             sslsf = new SSLConnectionSocketFactory(SSLContext.getDefault());
@@ -69,14 +70,15 @@ public class HttpUtil {
     }
 
     public static CloseableHttpClient getHttpClient() {
+        if (cm == null) {
+            init();
+        }
         CloseableHttpClient httpClient = HttpClients.custom()
                 .setConnectionManager(cm)
                 .build();
-
         /*CloseableHttpClient httpClient = HttpClients.createDefault();//如果不采用连接池就是这种方式获取连接*/
         return httpClient;
     }
-
 
     public static String doGetSSL(String apiUrl, Map<String, String> params) {
         return doGetSSL(apiUrl, params, false);
@@ -106,8 +108,9 @@ public class HttpUtil {
             }
         }
         apiUrl += param;
-        logger.info("ssl get请求地址:{}",apiUrl);
+        logger.info("ssl get请求地址:{}", apiUrl);
         HttpGet httpGet = new HttpGet(apiUrl);
+        httpGet.setConfig(requestConfig);
         if (isAjax) {
             httpGet.setHeader("X-Requested-With", "XMLHttpRequest");
         }
@@ -134,6 +137,7 @@ public class HttpUtil {
                     e.printStackTrace();
                 }
             }
+            httpGet.releaseConnection();
         }
 //        logger.info("ssl get响应:{}",httpStr);
         return httpStr;
@@ -171,11 +175,12 @@ public class HttpUtil {
                     e.printStackTrace();
                 }
             }
+            httpPost.releaseConnection();
         }
         return httpStr;
     }
 
-    public static String doPostSSL(String apiUrl, Map<String,String> param) {
+    public static String doPostSSL(String apiUrl, Map<String, String> param) {
 //        logger.info("ssl post请求:{}",JsonMapper.nonDefaultMapper().toJson(param));
         CloseableHttpClient httpClient = getHttpClient();
         HttpPost httpPost = new HttpPost(apiUrl);
@@ -207,22 +212,23 @@ public class HttpUtil {
                     e.printStackTrace();
                 }
             }
+            httpPost.releaseConnection();
         }
 //        logger.info("ssl post响应:{}",httpStr);
         return httpStr;
     }
 
-    public static List<NameValuePair> convertMap2PostParams(Map<String,String> params){
+    public static List<NameValuePair> convertMap2PostParams(Map<String, String> params) {
         List<String> keys = new ArrayList<String>(params.keySet());
-        if(keys.isEmpty()){
+        if (keys.isEmpty()) {
             return null;
         }
         int keySize = keys.size();
-        List<NameValuePair>  data = new LinkedList<NameValuePair>() ;
-        for(int i=0;i<keySize;i++){
+        List<NameValuePair> data = new LinkedList<NameValuePair>();
+        for (int i = 0; i < keySize; i++) {
             String key = keys.get(i);
             String value = params.get(key);
-            data.add(new BasicNameValuePair(key,value));
+            data.add(new BasicNameValuePair(key, value));
         }
         return data;
     }
