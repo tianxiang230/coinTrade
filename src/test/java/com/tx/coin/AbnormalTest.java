@@ -64,4 +64,11 @@ public class AbnormalTest {
         System.out.println(a-b*4);
 
     }
+
+    @Test
+    public void testHttp(){
+        String url="https://www.baidu.com";
+        String result =  HttpUtil.doGetSSL(url,null);
+        System.out.println(result);
+    }
 }
