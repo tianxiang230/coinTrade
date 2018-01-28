@@ -7,7 +7,8 @@ coin:
     orderinfo: https://www.okex.com/api/v1/order_info.do
     cancelOrder: https://www.okex.com/api/v1/cancel_order.do
     kline: https://www.okex.com/api/v1/kline.do
-
+  binance:
+    host: https://api.binance.com
 
 config:
   okxe:
@@ -32,3 +33,6 @@ config:
   #补仓位置
     b1: 0.99
     tradeOrNot: false
+
+  binance:
+    u1:
