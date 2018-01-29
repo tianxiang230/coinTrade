@@ -14,6 +14,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
@@ -45,12 +46,14 @@ public class OperatorServiceImpl implements IOperatorService {
     private IOrderInfoService orderInfoService;
     @Autowired
     private ITradeRecordWsService tradeRecordWsService;
+    @Value("${trade.wait.second}")
+    private Integer waitSecond;
     private DecimalFormat decimalFormat = new DecimalFormat("####.########");
 
     /**
      * 成交时间
      */
-    private Date t1=null;
+    private Date t1 = null;
     private Logger logger = LoggerFactory.getLogger(OperatorServiceImpl.class);
 
     @Override
@@ -109,7 +112,7 @@ public class OperatorServiceImpl implements IOperatorService {
                         for (int i = 0; i < successOrderIds.length; i++) {
                             String orders = successOrderIds[i];
                             logger.info("取消订单号为:{}", orders);
-                            if (StringUtils.isBlank(orders) || "\"\"".equals(orders)){
+                            if (StringUtils.isBlank(orders) || "\"\"".equals(orders)) {
                                 continue;
                             }
                             tradeService.cancelTrade(symbol, orders);
@@ -137,7 +140,8 @@ public class OperatorServiceImpl implements IOperatorService {
                     buy(symbol, prices.get(0), lb);
                     //5秒后卖出
                     try {
-                        Thread.sleep(5000);
+                        Thread.sleep(waitSecond * 1000);
+                        logger.info("等待{}秒", waitSecond);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
