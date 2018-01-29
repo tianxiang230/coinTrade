@@ -20,7 +20,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +59,8 @@ public class HttpUtil {
         cm.setDefaultMaxPerRoute(20);
 
         RequestConfig.Builder configBuilder = RequestConfig.custom();
+        //从连接池中获取连接的超时时间
+        configBuilder.setConnectionRequestTimeout(MAX_TIMEOUT);
         // 设置连接超时
         configBuilder.setConnectTimeout(MAX_TIMEOUT);
         // 设置读取超时
@@ -142,7 +143,6 @@ public class HttpUtil {
 //        logger.info("ssl get响应:{}",httpStr);
         return httpStr;
     }
-
 
     public static String doPostSSL(String apiUrl, String json) {
         CloseableHttpClient httpClient = getHttpClient();
