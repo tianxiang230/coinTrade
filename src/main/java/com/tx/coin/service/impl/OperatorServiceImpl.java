@@ -117,7 +117,14 @@ public class OperatorServiceImpl implements IOperatorService {
                             }
                             tradeService.cancelTrade(symbol, orders);
                         }
-                        //取消订单后重新获取余额
+                        //5秒后卖出
+                        try {
+                            Thread.sleep(waitSecond * 1000);
+                            logger.info("等待{}秒", waitSecond);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        //取消订单后等待几秒钟再重新获取余额
                         userInfo = userInfoService.getUserInfo();
                         try {
                             userInfoMap = BeanUtils.describe(userInfo);
@@ -138,13 +145,6 @@ public class OperatorServiceImpl implements IOperatorService {
                     }
 
                     buy(symbol, prices.get(0), lb);
-                    //5秒后卖出
-                    try {
-                        Thread.sleep(waitSecond * 1000);
-                        logger.info("等待{}秒", waitSecond);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                     double sellAmount = d2 - propertyConfig.getD1();
                     double perAmount = sellAmount / 5.0;
                     //获取整点的收盘价
