@@ -7,13 +7,18 @@ import com.tx.coin.entity.Quotations;
 import com.tx.coin.enums.OrderStateEnum;
 import com.tx.coin.enums.TimeIntervalEnum;
 import com.tx.coin.enums.TradeType;
+import com.tx.coin.service.ICoinQuotationService;
+import com.tx.coin.service.ICoinTradeService;
+import com.tx.coin.service.IOrderInfoService;
+import com.tx.coin.service.IUserInfoService;
 import com.tx.coin.service.okxe.*;
-import com.tx.coin.service.okxe.impl.OperatorServiceImpl;
+import com.tx.coin.service.okxe.impl.OkxeOperatorServiceImpl;
 import com.tx.coin.utils.JsonMapper;
 import com.tx.coin.ws.api.ITradeRecordWsService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -29,10 +34,13 @@ import java.util.List;
 public class InterfaceTest {
 
     @Autowired
+    @Qualifier(value = "okxeCoinQuotationsServiceImpl")
     private ICoinQuotationService quotationService;
     @Autowired
+    @Qualifier(value = "okxeCoinTradeServiceImpl")
     private ICoinTradeService tradeService;
     @Autowired
+    @Qualifier(value = "okxeUserInfoServiceImpl")
     private IUserInfoService userInfoService;
     @Autowired
     private IOrderInfoService orderInfoService;
@@ -42,8 +50,8 @@ public class InterfaceTest {
     private IKLineService ikLineService;
 
     @Test
-    public void getQuotation(){
-        Quotations quotations=quotationService.getQuotation("ltc_btc");
+    public void getQuotation() {
+        Quotations quotations = quotationService.getQuotation("ltc_btc");
         System.out.println(JsonMapper.nonDefaultMapper().toJson(quotations));
     }
 
@@ -51,53 +59,53 @@ public class InterfaceTest {
      * {"result":true,"order_id":123969940}
      */
     @Test
-    public void trade(){
-        tradeService.coinTrade("etc_usdt", TradeType.SELL,33.05,0.1);
+    public void trade() {
+        tradeService.coinTrade("etc_usdt", TradeType.SELL, 33.05, 0.1);
     }
 
     @Test
-    public void getUserInfo(){
-        UserInfoDTO userInfoDTO=userInfoService.getUserInfo();
+    public void getUserInfo() {
+        UserInfoDTO userInfoDTO = userInfoService.getUserInfo();
         System.out.println(JsonMapper.nonDefaultMapper().toJson(userInfoDTO));
     }
 
     @Test
-    public void getOrdersInfo(){
+    public void getOrdersInfo() {
         List<OrderInfoDTO> orderInfo = orderInfoService.getBatchOrdersInfo("123969940", 1, "etc_usdt");
         System.out.println(JsonMapper.nonDefaultMapper().toJson(orderInfo));
     }
 
     @Test
-    public void getOrderInfo(){
+    public void getOrderInfo() {
         //获取未完成订单
-        List<OrderInfoDTO> orderInfo=orderInfoService.getOrderInfo("-1","etc_usdt");
+        List<OrderInfoDTO> orderInfo = orderInfoService.getOrderInfo("-1", "etc_usdt");
         System.out.println(OrderStateEnum.PART_DEAL.getValue());
-        for(OrderInfoDTO order:orderInfo){
-            Integer state=order.getStatus();
-            if (state== OrderStateEnum.PART_DEAL.getValue() || state == OrderStateEnum.UNDEAL.getValue()){
+        for (OrderInfoDTO order : orderInfo) {
+            Integer state = order.getStatus();
+            if (state == OrderStateEnum.PART_DEAL.getValue() || state == OrderStateEnum.UNDEAL.getValue()) {
                 System.out.println(order.getOrderId());
             }
         }
     }
 
     @Test
-    public void getTradeRecordWs(){
+    public void getTradeRecordWs() {
         tradeRecordWsService.tradeRecord("etc_usdt");
     }
 
 
     @Test
-    public void getKLine(){
-        Calendar calendar=Calendar.getInstance();
-        calendar.set(Calendar.HOUR,15);
-        calendar.set(Calendar.DATE,11);
-        List<KLineDataDTO> list= ikLineService.pullLineData("etc_btc", TimeIntervalEnum.ONE_HOUR,100,calendar.getTime());
+    public void getKLine() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR, 15);
+        calendar.set(Calendar.DATE, 11);
+        List<KLineDataDTO> list = ikLineService.pullLineData("etc_btc", TimeIntervalEnum.ONE_HOUR, 100, calendar.getTime());
         System.out.println(JsonMapper.nonDefaultMapper().toJson(list));
     }
 
     @Test
-    public void getCancleOrder(){
-        String[] successOrderIds = OperatorServiceImpl.getCancelOrders(orderInfoService.getOrderInfo("-1", "etc_usdt"));
+    public void getCancleOrder() {
+        String[] successOrderIds = OkxeOperatorServiceImpl.getCancelOrders(orderInfoService.getOrderInfo("-1", "etc_usdt"));
         System.out.println(JsonMapper.nonDefaultMapper().toJson(successOrderIds));
     }
 }

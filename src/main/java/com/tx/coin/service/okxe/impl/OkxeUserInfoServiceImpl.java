@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tx.coin.config.OkxePropertyConfig;
 import com.tx.coin.dto.UserInfoDTO;
-import com.tx.coin.service.okxe.IUserInfoService;
+import com.tx.coin.service.IUserInfoService;
 import com.tx.coin.utils.EncryptHelper;
 import com.tx.coin.utils.HttpUtil;
 import com.tx.coin.utils.JsonMapper;
@@ -23,14 +23,14 @@ import java.util.Map;
  * Created by 你慧快乐 on 2018-1-11.
  */
 @Service
-public class UserInfoServiceImpl implements IUserInfoService {
+public class OkxeUserInfoServiceImpl implements IUserInfoService {
    @Autowired
    private OkxePropertyConfig okxePropertyConfig;
     @Value("${coin.remote.userinfo}")
     private String userInfoUrl;
     private ObjectMapper mapper=new ObjectMapper();
 
-    private Logger logger= LoggerFactory.getLogger(UserInfoServiceImpl.class);
+    private Logger logger = LoggerFactory.getLogger(OkxeUserInfoServiceImpl.class);
     @Override
     public UserInfoDTO getUserInfo() {
         String apiKey= okxePropertyConfig.getApiKey();

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tx.coin.config.OkxePropertyConfig;
 import com.tx.coin.dto.OrderInfoDTO;
 import com.tx.coin.enums.ResponseCode;
-import com.tx.coin.service.okxe.IOrderInfoService;
+import com.tx.coin.service.IOrderInfoService;
 import com.tx.coin.utils.EncryptHelper;
 import com.tx.coin.utils.HttpUtil;
 import com.tx.coin.utils.JsonMapper;
@@ -25,7 +25,7 @@ import java.util.Map;
  * Created by 你慧快乐 on 2018-1-11.
  */
 @Service
-public class OrderInfoServiceImpl implements IOrderInfoService {
+public class OkxeOrderInfoServiceImpl implements IOrderInfoService {
     @Autowired
     private OkxePropertyConfig okxePropertyConfig;
 
@@ -34,7 +34,7 @@ public class OrderInfoServiceImpl implements IOrderInfoService {
     @Value("${coin.remote.orderinfo}")
     private String orderInfoUrl;
 
-    private Logger logger = LoggerFactory.getLogger(OrderInfoServiceImpl.class);
+    private Logger logger = LoggerFactory.getLogger(OkxeOrderInfoServiceImpl.class);
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override

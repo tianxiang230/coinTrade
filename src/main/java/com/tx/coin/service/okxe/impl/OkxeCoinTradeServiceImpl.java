@@ -8,7 +8,7 @@ import com.tx.coin.enums.OrderType;
 import com.tx.coin.enums.ResponseCode;
 import com.tx.coin.enums.TradeType;
 import com.tx.coin.repository.OrderRecordRepository;
-import com.tx.coin.service.okxe.ICoinTradeService;
+import com.tx.coin.service.ICoinTradeService;
 import com.tx.coin.utils.EncryptHelper;
 import com.tx.coin.utils.HttpUtil;
 import com.tx.coin.utils.JsonMapper;
@@ -31,7 +31,7 @@ import java.util.Map;
  * Created by 你慧快乐 on 2018-1-10.
  */
 @Service
-public class CoinTradeServiceImpl implements ICoinTradeService {
+public class OkxeCoinTradeServiceImpl implements ICoinTradeService {
     @Autowired
     private OkxePropertyConfig okxePropertyConfig;
     @Autowired
@@ -44,7 +44,7 @@ public class CoinTradeServiceImpl implements ICoinTradeService {
     private DecimalFormat decimalFormat = new DecimalFormat("####.########");
 
 
-    Logger logger = LoggerFactory.getLogger(CoinQuotationsServiceImpl.class);
+    Logger logger = LoggerFactory.getLogger(OkxeCoinQuotationsServiceImpl.class);
 
     @Override
     public String coinTrade(String symbol, TradeType tradeType, double price, double amount) {

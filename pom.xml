@@ -88,7 +88,17 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
-
+        <!-- 币安依赖 -->
+        <dependency>
+            <groupId>com.binance.api</groupId>
+            <artifactId>binance-api-client</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.maxsherry.retrofit2</groupId>
+            <artifactId>retrofit2-fastjson-cookiejar</artifactId>
+            <version>1.0</version>
+        </dependency>
 <!-- CSS AND JS -->
         <dependency>
             <groupId>org.webjars</groupId>

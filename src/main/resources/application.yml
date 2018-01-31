@@ -33,6 +33,6 @@ config:
   #补仓位置
     b1: 0.99
     tradeOrNot: false
-
   binance:
-    u1:
+    apiKey: hxUARdjucDDe2UNswXpo1ywbw1p4Cpm7zlDfCxiPWySho5sMTQ7oAU5xlmNNU3sA
+    secretKey: ktJ598k7YdZbUGfZjq9QoBtWbfyHqgJUxkEllwkf6opkCbZneaAv2m62fBtzb35u

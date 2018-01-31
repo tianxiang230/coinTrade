@@ -1,11 +1,15 @@
-package com.tx.coin.service.impl;
+package com.tx.coin.service.okxe.impl;
 
 import com.tx.coin.config.OkxePropertyConfig;
 import com.tx.coin.dto.OrderInfoDTO;
 import com.tx.coin.dto.UserInfoDTO;
 import com.tx.coin.enums.OrderStateEnum;
 import com.tx.coin.enums.TradeType;
-import com.tx.coin.service.okxe.*;
+import com.tx.coin.service.ICoinTradeService;
+import com.tx.coin.service.IOperatorService;
+import com.tx.coin.service.IOrderInfoService;
+import com.tx.coin.service.IUserInfoService;
+import com.tx.coin.service.common.IQuotationCommonService;
 import com.tx.coin.utils.MathUtil;
 import com.tx.coin.utils.PriceUtil;
 import com.tx.coin.ws.api.ITradeRecordWsService;
@@ -15,6 +19,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +29,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+
 /**
  * @author 你慧快乐
  * @version V1.0
@@ -32,16 +38,19 @@ import java.util.Map;
  * @date 2018-1-12 18:51
  */
 @Component
-public class OperatorServiceImpl implements IOperatorService {
+public class OkxeOperatorServiceImpl implements IOperatorService {
     @Autowired
-    private ICoinQuotationService quotationService;
+    private IQuotationCommonService quotationCommonService;
     @Autowired
     private OkxePropertyConfig okxePropertyConfig;
     @Autowired
+    @Qualifier(value = "okxeCoinTradeServiceImpl")
     private ICoinTradeService tradeService;
     @Autowired
+    @Qualifier(value = "okxeUserInfoServiceImpl")
     private IUserInfoService userInfoService;
     @Autowired
+    @Qualifier(value = "okxeOrderInfoServiceImpl")
     private IOrderInfoService orderInfoService;
     @Autowired
     private ITradeRecordWsService tradeRecordWsService;
@@ -53,14 +62,17 @@ public class OperatorServiceImpl implements IOperatorService {
      * 成交时间
      */
     private Date t1 = null;
-    private Logger logger = LoggerFactory.getLogger(OperatorServiceImpl.class);
+    private Logger logger = LoggerFactory.getLogger(OkxeOperatorServiceImpl.class);
 
     @Override
     public void operate() {
         try {
             String symbol = okxePropertyConfig.getU1() + "_" + okxePropertyConfig.getU2();
-            List<Double> prices = quotationService.getLocalNewPrice(symbol);
-
+            List<Double> prices = quotationCommonService.getLocalNewPrice(symbol);
+            if (prices.size() < IQuotationCommonService.DATA_SIZE) {
+                okxePropertyConfig.setTradeOrNot(false);
+                throw new RuntimeException("抓取数据不足,自动关闭交易" + IQuotationCommonService.DATA_SIZE);
+            }
             //前20个价格均值
             double mb = MathUtil.avg(prices);
             //取得标准差
@@ -144,10 +156,14 @@ public class OperatorServiceImpl implements IOperatorService {
                     }
 
                     buy(symbol, prices.get(0), lb);
-                    double sellAmount = d2 - propertyConfig.getD1();
+                    double sellAmount = d2 - okxePropertyConfig.getD1();
                     double perAmount = sellAmount / 5.0;
                     //获取整点的收盘价
-                    prices = quotationService.getHourPrice(symbol);
+                    prices = quotationCommonService.getHourPrice(symbol);
+                    if (prices.size() < IQuotationCommonService.DATA_SIZE) {
+                        okxePropertyConfig.setTradeOrNot(false);
+                        throw new RuntimeException("抓取数据不足,自动关闭交易" + IQuotationCommonService.DATA_SIZE);
+                    }
                     //重新计算整点标准差
                     adv = PriceUtil.calcuMd(prices);
                     mb = MathUtil.avg(prices);
