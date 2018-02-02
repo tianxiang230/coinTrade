@@ -1,15 +1,23 @@
 package com.tx.coin.controller;
 
-import com.tx.coin.config.OkxePropertyConfig;
+import com.tx.coin.entity.PlatFormConfig;
+import com.tx.coin.enums.PlatType;
+import com.tx.coin.repository.PlatFormConfigRepository;
+import com.tx.coin.service.ISymbolService;
+import com.tx.coin.utils.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author 你慧快乐
@@ -21,6 +29,14 @@ import java.util.Date;
 @Controller
 public class ConfigController {
     private final String SessionName = "isLogin";
+    @Autowired
+    private PlatFormConfigRepository configRepository;
+    @Autowired
+    @Qualifier(value = "binSymbolServiceImpl")
+    private ISymbolService binSymbolServiceImpl;
+    @Autowired
+    @Qualifier(value = "okxeSymbolServiceImpl")
+    private ISymbolService okxeSymbolServiceImpl;
 
     @RequestMapping(value = "/login.html", method = RequestMethod.GET)
     public String login(String username, String password, ModelMap model, HttpServletRequest request) {
@@ -29,57 +45,46 @@ public class ConfigController {
         }
         if (username.equals("adminUser") && password.equals("adminUser")) {
             request.getSession().setAttribute(SessionName, new Date());
-            return "redirect:config.html";
+            return "redirect:plat.html";
         } else {
             model.addAttribute("errorInfo", "用户名或密码错误");
             return "login";
         }
     }
 
-    @RequestMapping(value = "/config.html")
-    public String config(ModelMap model, OkxePropertyConfig config, HttpServletRequest request) {
-        Object isLogin = request.getSession().getAttribute(SessionName);
-        if (isLogin == null) {
-            return "redirect:login.html";
+    @RequestMapping(value = "/config.html", method = RequestMethod.GET)
+    public String config(ModelMap model, String plat) {
+        Map<String, Set<String>> symbols = null;
+        if (plat != null && plat.equals(PlatType.BIN.getCode())) {
+            symbols = binSymbolServiceImpl.getSymbolPairs();
+        } else if (plat != null && plat.equals(PlatType.OKXE.getCode())) {
+            symbols = okxeSymbolServiceImpl.getSymbolPairs();
         }
-       /* if (config.getTradeOrNot() != null) {
-            okxePropertyConfig.setTradeOrNot(config.getTradeOrNot());
+        model.addAttribute("symbols", symbols);
+        if (StringUtils.isNotBlank(plat)) {
+            PlatType platType = PlatType.getType(plat);
+            model.addAttribute("platName", platType.getName());
+            PlatFormConfig config = configRepository.selectByPlat(plat);
+            if (config == null) {
+                config = new PlatFormConfig();
+            }
+            model.addAttribute("config", config);
         }
-        if (config.getD3() != null) {
-            okxePropertyConfig.setD3(config.getD3());
-        }
-        if (config.getD1() != null) {
-            okxePropertyConfig.setD1(config.getD1());
-        }
-        if (config.getU1() != null) {
-            okxePropertyConfig.setU1(config.getU1());
-        }
-        if (config.getU2() != null) {
-            okxePropertyConfig.setU2(config.getU2());
-        }
-        if (config.getB1() != null) {
-            okxePropertyConfig.setB1(config.getB1());
-        }
-        if (config.getS1() != null) {
-            okxePropertyConfig.setS1(config.getS1());
-        }
-        if (config.getY1() != null) {
-            okxePropertyConfig.setY1(config.getY1());
-        }
-        if (config.getY2() != null) {
-            okxePropertyConfig.setY2(config.getY2());
-        }
-        if (config.getY3() != null) {
-            okxePropertyConfig.setY3(config.getY3());
-        }
-        if (config.getY4() != null) {
-            okxePropertyConfig.setY4(config.getY4());
-        }
-        if (config.getY5() != null) {
-            okxePropertyConfig.setY5(config.getY5());
-        }
-        model.addAttribute("config", okxePropertyConfig);*/
         return "config";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/modifyConfig", method = RequestMethod.POST)
+    public Boolean saveConfig(PlatFormConfig config) {
+        config.setCreateDate(DateUtil.getFormatDateTime(new Date()));
+        config = configRepository.save(config);
+        return Boolean.TRUE;
+    }
+
+    @RequestMapping(value = "/plat.html")
+    public String selectPlat(ModelMap model) {
+        model.addAttribute("plats", PlatType.values());
+        return "plat";
     }
 
     @RequestMapping(value = "/logout")

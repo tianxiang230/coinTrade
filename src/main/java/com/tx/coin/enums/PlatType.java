@@ -8,12 +8,22 @@ package com.tx.coin.enums;
  * @date 2018-2-1 13:33
  */
 public enum PlatType {
-    BIN("bin"),
-    OKXE("okxe");
+    BIN("bin", "币安"),
+    OKXE("okxe", "OKXE");
     private String code;
+    private String name;
 
-    PlatType(String code) {
+    PlatType(String code, String name) {
         this.code = code;
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getCode() {
@@ -22,5 +32,14 @@ public enum PlatType {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public static PlatType getType(String plat) {
+        for (PlatType platType : PlatType.values()) {
+            if (platType.getCode().equals(plat)) {
+                return platType;
+            }
+        }
+        return null;
     }
 }

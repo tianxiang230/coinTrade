@@ -6,6 +6,8 @@ import com.tx.coin.config.OkxePropertyConfig;
 import com.tx.coin.context.PlatConfigContext;
 import com.tx.coin.dto.UserInfoDTO;
 import com.tx.coin.entity.PlatFormConfig;
+import com.tx.coin.enums.PlatType;
+import com.tx.coin.repository.PlatFormConfigRepository;
 import com.tx.coin.service.IUserInfoService;
 import com.tx.coin.utils.EncryptHelper;
 import com.tx.coin.utils.HttpUtil;
@@ -26,8 +28,8 @@ import java.util.Map;
  */
 @Service
 public class OkxeUserInfoServiceImpl implements IUserInfoService {
-    //   @Autowired
-//   private OkxePropertyConfig okxePropertyConfig;
+    @Autowired
+    private PlatFormConfigRepository configRepository;
     @Value("${coin.remote.userinfo}")
     private String userInfoUrl;
     private ObjectMapper mapper=new ObjectMapper();
@@ -36,6 +38,9 @@ public class OkxeUserInfoServiceImpl implements IUserInfoService {
     @Override
     public UserInfoDTO getUserInfo() {
         PlatFormConfig okxePropertyConfig = PlatConfigContext.getCurrentConfig();
+        if (okxePropertyConfig == null) {
+            okxePropertyConfig = configRepository.selectByPlat(PlatType.OKXE.getCode());
+        }
         String apiKey= okxePropertyConfig.getApiKey();
         String secretKey= okxePropertyConfig.getSecretKey();
         Map<String,String> param=new HashMap<>(5);

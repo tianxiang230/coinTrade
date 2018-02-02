@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>平台选择</title>
+
+    <script src="/webjars/jquery/1.11.1/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/webjars/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <style>
+        a {
+            height: 80px;
+            width: 300px;
+            display: block;
+            line-height: 80px;
+            font-size: 2em;
+        }
+
+        span {
+            display: block !important;
+            width: 300px;
+            margin-bottom: 10px;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        .col-center {
+            float: none;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 300px;
+            margin-top: 100px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3 col-center">
+            <span class="label label-info" th:each="plat:${plats}">
+                <a th:href="${'config.html?plat='+plat.code}"><span th:text="${plat.name}"></span></a>
+            </span>
+        </div>
+    </div>
+</div>
+</body>
+</html>

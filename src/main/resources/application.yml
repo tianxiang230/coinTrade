@@ -7,32 +7,14 @@ coin:
     orderinfo: https://www.okex.com/api/v1/order_info.do
     cancelOrder: https://www.okex.com/api/v1/cancel_order.do
     kline: https://www.okex.com/api/v1/kline.do
-  binance:
-    host: https://api.binance.com
 
 config:
   okxe:
     apiKey: 23ebb8d5-9f96-435f-abc5-49f7f7596f5f
     secretKey: 8BB13B41188F9E48B45D8B91B34AF4DA
-  #底仓方
-    u1: etc
-  #ASK方
-    u2: usdt
-  #底仓数量
-    d1: 0
-  #ASK底仓
-    d3: 0
-  #基本手数
-    s1: 1
-  #浮盈率
-    y1: 1.001
-    y2: 1.002
-    y3: 1.003
-    y4: 1.004
-    y5: 1.005
-  #补仓位置
-    b1: 0.99
-    tradeOrNot: false
+    baseSymbol: etc,btc,eth,eos,bch,btg
+    askSymbol: usdt,btc,eth
+
   binance:
     apiKey: hxUARdjucDDe2UNswXpo1ywbw1p4Cpm7zlDfCxiPWySho5sMTQ7oAU5xlmNNU3sA
     secretKey: ktJ598k7YdZbUGfZjq9QoBtWbfyHqgJUxkEllwkf6opkCbZneaAv2m62fBtzb35u

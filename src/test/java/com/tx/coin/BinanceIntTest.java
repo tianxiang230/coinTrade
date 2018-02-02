@@ -9,11 +9,16 @@ import com.binance.api.client.domain.account.Order;
 import com.binance.api.client.domain.account.request.AllOrdersRequest;
 import com.binance.api.client.domain.account.request.CancelOrderRequest;
 import com.binance.api.client.domain.account.request.OrderRequest;
+import com.binance.api.client.domain.general.ExchangeInfo;
+import com.binance.api.client.domain.general.SymbolInfo;
 import com.binance.api.client.domain.market.TickerPrice;
 import com.binance.api.client.domain.market.TickerStatistics;
 import org.junit.Test;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static com.binance.api.client.domain.account.NewOrder.marketBuy;
 
@@ -79,5 +84,20 @@ public class BinanceIntTest {
         OrderRequest orderRequest = new OrderRequest("INSBTC");
         List<Order> openOrders = client.getOpenOrders(orderRequest);
         System.out.println(JSON.toJSONString(openOrders));
+    }
+
+    @Test
+    public void testExchange() {
+        ExchangeInfo exchangeInfo = client.getExchangeInfo();
+        List<SymbolInfo> symbolInfos = exchangeInfo.getSymbols();
+        System.out.println(symbolInfos.size());
+        Set<String> base = new TreeSet<>();
+        Set<String> ask = new TreeSet<>();
+        for (SymbolInfo symbolInfo : symbolInfos) {
+            base.add(symbolInfo.getBaseAsset());
+            ask.add(symbolInfo.getQuoteAsset());
+        }
+        System.out.println(base);
+        System.out.println(ask);
     }
 }
