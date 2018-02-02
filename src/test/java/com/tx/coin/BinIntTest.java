@@ -2,6 +2,8 @@ package com.tx.coin;
 
 import com.alibaba.fastjson.JSON;
 import com.tx.coin.dto.UserInfoDTO;
+import com.tx.coin.enums.TradeType;
+import com.tx.coin.service.ICoinTradeService;
 import com.tx.coin.service.IUserInfoService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,10 +25,31 @@ public class BinIntTest {
     @Autowired
     @Qualifier(value = "binUserInfoServiceImpl")
     private IUserInfoService userInfoService;
+    @Autowired
+    @Qualifier(value = "binCoinTradeServiceImpl")
+    private ICoinTradeService tradeService;
 
     @Test
     public void testUserInfo() {
         UserInfoDTO userInfoDTO = userInfoService.getUserInfo();
         System.out.println(JSON.toJSONString(userInfoDTO));
+    }
+
+
+    @Test
+    public void testBuy() {
+        String symbol = "INSBTC";
+        double price = 0.0002;
+        double amount = 10;
+        String orderId = tradeService.coinTrade(symbol, TradeType.BUY, price, amount);
+        System.out.println(orderId);
+    }
+
+    @Test
+    public void cancelOrder() {
+        String symbol = "INSBTC";
+        String orderId = "1260764";
+        boolean result = tradeService.cancelTrade(symbol, orderId);
+        System.out.println(result);
     }
 }

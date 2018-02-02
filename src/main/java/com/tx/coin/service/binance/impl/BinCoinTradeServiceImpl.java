@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
+
 
 /**
  * @author 你慧快乐
@@ -34,10 +36,11 @@ public class BinCoinTradeServiceImpl implements ICoinTradeService {
     private BinanceApiRestClient restClient;
     @Autowired
     private OrderRecordRepository orderRecordRepository;
+    private DecimalFormat decimalFormat = new DecimalFormat("####.########");
 
     @Override
     public String coinTrade(String symbol, TradeType tradeType, double price, double amount) {
-        logger.info("币安请求[" + (tradeType == TradeType.BUY ? "购买" : "出售") + "]交易,symbol:{},数量:{},价格:{}", new Object[]{symbol, amount, price});
+        logger.info("币安请求[" + (tradeType == TradeType.BUY ? "购买" : "出售") + "]交易,symbol:{},数量:{},价格:{}", new Object[]{symbol, amount, decimalFormat.format(price)});
         if (StringUtils.isBlank(symbol) || price <= 0 || amount <= 0) {
             logger.info("交易参数不合法,symbol:{},price:{},amount:{}", new Object[]{symbol, price, amount});
             return null;
@@ -47,7 +50,7 @@ public class BinCoinTradeServiceImpl implements ICoinTradeService {
             return null;
         }
         OrderSide orderSide = tradeType == TradeType.SELL ? OrderSide.SELL : OrderSide.BUY;
-        NewOrder newOrder = new NewOrder(symbol, orderSide, OrderType.LIMIT, TimeInForce.GTC, String.valueOf(amount), String.valueOf(price));
+        NewOrder newOrder = new NewOrder(symbol, orderSide, OrderType.LIMIT, TimeInForce.GTC, String.valueOf(amount), decimalFormat.format(price));
         NewOrderResponse orderResponse = restClient.newOrder(newOrder);
         logger.info("币安交易响应:{}", JSON.toJSONString(orderResponse));
         String orderId = orderResponse.getOrderId().toString();

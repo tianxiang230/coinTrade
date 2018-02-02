@@ -1,10 +1,10 @@
 package com.tx.coin.service.common.impl;
 
+import com.tx.coin.enums.PlatType;
 import com.tx.coin.repository.QuotationsRepository;
 import com.tx.coin.service.common.IQuotationCommonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
 import java.util.List;
@@ -22,20 +22,20 @@ public class QuotationCommonServiceImpl implements IQuotationCommonService {
     private QuotationsRepository quotationsRepository;
 
     @Override
-    public List<Double> getLocalNewPrice(String symbol) {
-        List<Double> list = quotationsRepository.getLastPriceBySymbolOrderByDate(symbol, DATA_SIZE);
+    public List<Double> getLocalNewPrice(String symbol, PlatType platType) {
+        List<Double> list = quotationsRepository.getLastPriceBySymbolOrderByDate(symbol, platType.getCode(), DATA_SIZE);
         return list;
     }
 
     @Override
-    public List<Double> getHourPrice(String symbol) {
+    public List<Double> getHourPrice(String symbol, PlatType platType) {
         List<Double> list = null;
         if (Calendar.getInstance().get(Calendar.MINUTE) == 0) {
             //整点
-            list = quotationsRepository.findHourBySymbolOrderByDate(symbol, DATA_SIZE);
+            list = quotationsRepository.findHourBySymbolOrderByDate(symbol, platType.getCode(), DATA_SIZE);
         } else {
-            list = quotationsRepository.findHourBySymbolOrderByDate(symbol, DATA_SIZE - 1);
-            Double lastPrice = quotationsRepository.getLastPriceBySymbolOrderByDate(symbol, 1).get(0);
+            list = quotationsRepository.findHourBySymbolOrderByDate(symbol, platType.getCode(), DATA_SIZE - 1);
+            Double lastPrice = quotationsRepository.getLastPriceBySymbolOrderByDate(symbol, platType.getCode(), 1).get(0);
             list.add(lastPrice);
         }
         return list;

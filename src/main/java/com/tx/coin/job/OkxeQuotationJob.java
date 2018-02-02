@@ -1,7 +1,10 @@
 package com.tx.coin.job;
 
-import com.tx.coin.config.OkxePropertyConfig;
+import com.tx.coin.context.PlatConfigContext;
+import com.tx.coin.entity.PlatFormConfig;
 import com.tx.coin.entity.Quotations;
+import com.tx.coin.enums.PlatType;
+import com.tx.coin.repository.PlatFormConfigRepository;
 import com.tx.coin.repository.QuotationsRepository;
 import com.tx.coin.service.ICoinQuotationService;
 import com.tx.coin.service.IOperatorService;
@@ -20,7 +23,7 @@ import java.util.Date;
  * Created by 你慧快乐 on 2018-1-9.
  */
 @Component
-public class PullOkxeQuotationJob {
+public class OkxeQuotationJob {
 
     @Autowired
     @Qualifier(value = "okxeCoinQuotationsServiceImpl")
@@ -28,24 +31,32 @@ public class PullOkxeQuotationJob {
     @Autowired
     private QuotationsRepository quotationsRepository;
     @Autowired
-    @Qualifier(value = "okxeOperatorServiceImpl")
+    @Qualifier(value = "okxeOperatorServiceServiceImpl")
     private IOperatorService operatorService;
     @Autowired
-    private OkxePropertyConfig okxePropertyConfig;
-    private Logger logger = LoggerFactory.getLogger(PullOkxeQuotationJob.class);
+    private PlatFormConfigRepository configRepository;
+    private Logger logger = LoggerFactory.getLogger(OkxeQuotationJob.class);
 
     //    @Scheduled(cron = "0 0/5 * * * ?")
-    @Scheduled(cron = "0 0/15 * * * ?")
+//    @Scheduled(cron = "0 0/15 * * * ?")
     public void execute() {
-        final String symbol = okxePropertyConfig.getU1() + "_" + okxePropertyConfig.getU2();
+        PlatFormConfig platFormConfig = configRepository.selectByPlat(PlatType.OKXE.getCode());
+        if (platFormConfig == null) {
+            logger.info("尚未对OKXE平台做配置，执行结束");
+            return;
+        }
+        PlatConfigContext.setCurrentConfig(platFormConfig);
+
+        final String symbol = platFormConfig.getU1() + "_" + platFormConfig.getU2();
         Quotations quotations = quotationService.getQuotation(symbol);
         quotations.setSymbol(symbol);
+        quotations.setPlat(PlatType.OKXE.getCode());
         quotations.setCreateDate(DateUtil.getFormatDateTime(new Date()));
         quotations = quotationsRepository.save(quotations);
         if (quotations != null) {
             logger.info("存入最新行情成功");
         }
-        if (okxePropertyConfig.getTradeOrNot()) {
+        if (platFormConfig.getTradeOrNot()) {
             //执行交易流程
             operatorService.operate();
         }

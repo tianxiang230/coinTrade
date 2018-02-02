@@ -25,9 +25,9 @@ import java.util.Map;
  * @Description
  * @date 2018-1-13 12:59
  */
-@Service
+//@Service
 public class TradeRecordServiceImpl implements ITradeRecordWsService {
-    @Autowired
+    //    @Autowired
     private OkxePropertyConfig okxePropertyConfig;
     Logger logger = LoggerFactory.getLogger(TradeRecordServiceImpl.class);
 

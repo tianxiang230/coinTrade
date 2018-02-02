@@ -23,5 +23,5 @@ public interface IOrderInfoService {
      * @param symbol
      * @return
      */
-    List<OrderInfoDTO> getOrderInfo(String orderId, String symbol);
+    List<OrderInfoDTO> getOpenOrderInfo(String orderId, String symbol);
 }

@@ -1,5 +1,7 @@
 package com.tx.coin.service.common;
 
+import com.tx.coin.enums.PlatType;
+
 import java.util.List;
 
 /**
@@ -16,15 +18,17 @@ public interface IQuotationCommonService {
      * 计算最近20次交易行情数据
      *
      * @param symbol
+     * @param platType 平台类型
      * @return
      */
-    List<Double> getLocalNewPrice(String symbol);
+    List<Double> getLocalNewPrice(String symbol, PlatType platType);
 
     /**
      * 获取前20个整点价格行情
      *
      * @param symbol
+     * @param platType 平台类型
      * @return
      */
-    List<Double> getHourPrice(String symbol);
+    List<Double> getHourPrice(String symbol, PlatType platType);
 }

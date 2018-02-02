@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tx.coin.dto.OrderInfoDTO;
 import com.tx.coin.dto.UserInfoDTO;
 import com.tx.coin.enums.OrderStateEnum;
-import com.tx.coin.service.okxe.impl.OkxeOperatorServiceImpl;
+import com.tx.coin.service.okxe.impl.OkxeOperatorServiceServiceImpl;
 import com.tx.coin.utils.HttpUtil;
 import com.tx.coin.utils.JsonMapper;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -37,21 +37,6 @@ public class AbnormalTest {
         System.out.println(JsonMapper.nonDefaultMapper().toJson(list));
     }
 
-    @Test
-    public void testDate(){
-        List<OrderInfoDTO> orderInfo=new ArrayList<>();
-        OrderInfoDTO orderInfoDTO=null;
-        for (int i=0;i<5;i++){
-            orderInfoDTO=new OrderInfoDTO();
-            orderInfoDTO.setStatus(OrderStateEnum.PART_DEAL.getValue());
-            orderInfoDTO.setOrderId(RandomStringUtils.random(10,true,true));
-            orderInfo.add(orderInfoDTO);
-        }
-        String[] ids = OkxeOperatorServiceImpl.getCancelOrders(orderInfo);
-        for(String id:ids){
-            System.out.println(id);
-        }
-    }
 
     @Test
     public void test(){

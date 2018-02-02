@@ -12,7 +12,7 @@ import com.tx.coin.service.ICoinTradeService;
 import com.tx.coin.service.IOrderInfoService;
 import com.tx.coin.service.IUserInfoService;
 import com.tx.coin.service.okxe.*;
-import com.tx.coin.service.okxe.impl.OkxeOperatorServiceImpl;
+import com.tx.coin.service.okxe.impl.OkxeOperatorServiceServiceImpl;
 import com.tx.coin.utils.JsonMapper;
 import com.tx.coin.ws.api.ITradeRecordWsService;
 import org.junit.Test;
@@ -43,11 +43,9 @@ public class InterfaceTest {
     @Qualifier(value = "okxeUserInfoServiceImpl")
     private IUserInfoService userInfoService;
     @Autowired
+    @Qualifier(value = "okxeOrderInfoServiceImpl")
     private IOrderInfoService orderInfoService;
-    @Autowired
-    private ITradeRecordWsService tradeRecordWsService;
-    @Autowired
-    private IKLineService ikLineService;
+
 
     @Test
     public void getQuotation() {
@@ -78,7 +76,7 @@ public class InterfaceTest {
     @Test
     public void getOrderInfo() {
         //获取未完成订单
-        List<OrderInfoDTO> orderInfo = orderInfoService.getOrderInfo("-1", "etc_usdt");
+        List<OrderInfoDTO> orderInfo = orderInfoService.getOpenOrderInfo("-1", "etc_usdt");
         System.out.println(OrderStateEnum.PART_DEAL.getValue());
         for (OrderInfoDTO order : orderInfo) {
             Integer state = order.getStatus();
@@ -88,24 +86,4 @@ public class InterfaceTest {
         }
     }
 
-    @Test
-    public void getTradeRecordWs() {
-        tradeRecordWsService.tradeRecord("etc_usdt");
-    }
-
-
-    @Test
-    public void getKLine() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR, 15);
-        calendar.set(Calendar.DATE, 11);
-        List<KLineDataDTO> list = ikLineService.pullLineData("etc_btc", TimeIntervalEnum.ONE_HOUR, 100, calendar.getTime());
-        System.out.println(JsonMapper.nonDefaultMapper().toJson(list));
-    }
-
-    @Test
-    public void getCancleOrder() {
-        String[] successOrderIds = OkxeOperatorServiceImpl.getCancelOrders(orderInfoService.getOrderInfo("-1", "etc_usdt"));
-        System.out.println(JsonMapper.nonDefaultMapper().toJson(successOrderIds));
-    }
 }

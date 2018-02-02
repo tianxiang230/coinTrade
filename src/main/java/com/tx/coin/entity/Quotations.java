@@ -10,6 +10,10 @@ import javax.persistence.Table;
 @Entity
 public class Quotations extends BaseEntity{
     /**
+     * 平台，币安或火币等
+     */
+    private String plat;
+    /**
      * 货币股票种类
      */
     private String symbol;
@@ -104,5 +108,13 @@ public class Quotations extends BaseEntity{
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getPlat() {
+        return plat;
+    }
+
+    public void setPlat(String plat) {
+        this.plat = plat;
     }
 }

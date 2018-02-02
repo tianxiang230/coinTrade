@@ -20,8 +20,6 @@ import java.util.Date;
  */
 @Controller
 public class ConfigController {
-    @Autowired
-    private OkxePropertyConfig okxePropertyConfig;
     private final String SessionName = "isLogin";
 
     @RequestMapping(value = "/login.html", method = RequestMethod.GET)
@@ -44,7 +42,7 @@ public class ConfigController {
         if (isLogin == null) {
             return "redirect:login.html";
         }
-        if (config.getTradeOrNot() != null) {
+       /* if (config.getTradeOrNot() != null) {
             okxePropertyConfig.setTradeOrNot(config.getTradeOrNot());
         }
         if (config.getD3() != null) {
@@ -80,7 +78,7 @@ public class ConfigController {
         if (config.getY5() != null) {
             okxePropertyConfig.setY5(config.getY5());
         }
-        model.addAttribute("config", okxePropertyConfig);
+        model.addAttribute("config", okxePropertyConfig);*/
         return "config";
     }
 

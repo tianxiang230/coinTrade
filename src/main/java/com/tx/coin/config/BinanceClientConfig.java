@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @Import(BinancePropertyConfig.class)
-public class BinanceConfig {
+public class BinanceClientConfig {
     @Bean
     public BinanceApiRestClient getClient(BinancePropertyConfig config) {
         BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(config.getApiKey(), config.getSecretKey());

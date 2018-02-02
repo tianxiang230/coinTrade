@@ -3,7 +3,9 @@ package com.tx.coin.service.okxe.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tx.coin.config.OkxePropertyConfig;
+import com.tx.coin.context.PlatConfigContext;
 import com.tx.coin.dto.UserInfoDTO;
+import com.tx.coin.entity.PlatFormConfig;
 import com.tx.coin.service.IUserInfoService;
 import com.tx.coin.utils.EncryptHelper;
 import com.tx.coin.utils.HttpUtil;
@@ -24,8 +26,8 @@ import java.util.Map;
  */
 @Service
 public class OkxeUserInfoServiceImpl implements IUserInfoService {
-   @Autowired
-   private OkxePropertyConfig okxePropertyConfig;
+    //   @Autowired
+//   private OkxePropertyConfig okxePropertyConfig;
     @Value("${coin.remote.userinfo}")
     private String userInfoUrl;
     private ObjectMapper mapper=new ObjectMapper();
@@ -33,6 +35,7 @@ public class OkxeUserInfoServiceImpl implements IUserInfoService {
     private Logger logger = LoggerFactory.getLogger(OkxeUserInfoServiceImpl.class);
     @Override
     public UserInfoDTO getUserInfo() {
+        PlatFormConfig okxePropertyConfig = PlatConfigContext.getCurrentConfig();
         String apiKey= okxePropertyConfig.getApiKey();
         String secretKey= okxePropertyConfig.getSecretKey();
         Map<String,String> param=new HashMap<>(5);

@@ -1,10 +1,13 @@
 package com.tx.coin.service.okxe.impl;
 
-import com.tx.coin.config.OkxePropertyConfig;
+import com.tx.coin.context.PlatConfigContext;
 import com.tx.coin.dto.OrderInfoDTO;
 import com.tx.coin.dto.UserInfoDTO;
+import com.tx.coin.entity.PlatFormConfig;
 import com.tx.coin.enums.OrderStateEnum;
+import com.tx.coin.enums.PlatType;
 import com.tx.coin.enums.TradeType;
+import com.tx.coin.repository.PlatFormConfigRepository;
 import com.tx.coin.service.ICoinTradeService;
 import com.tx.coin.service.IOperatorService;
 import com.tx.coin.service.IOrderInfoService;
@@ -12,7 +15,6 @@ import com.tx.coin.service.IUserInfoService;
 import com.tx.coin.service.common.IQuotationCommonService;
 import com.tx.coin.utils.MathUtil;
 import com.tx.coin.utils.PriceUtil;
-import com.tx.coin.ws.api.ITradeRecordWsService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -25,7 +27,6 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -38,11 +39,9 @@ import java.util.Map;
  * @date 2018-1-12 18:51
  */
 @Component
-public class OkxeOperatorServiceImpl implements IOperatorService {
+public class OkxeOperatorServiceServiceImpl implements IOperatorService {
     @Autowired
     private IQuotationCommonService quotationCommonService;
-    @Autowired
-    private OkxePropertyConfig okxePropertyConfig;
     @Autowired
     @Qualifier(value = "okxeCoinTradeServiceImpl")
     private ICoinTradeService tradeService;
@@ -50,27 +49,25 @@ public class OkxeOperatorServiceImpl implements IOperatorService {
     @Qualifier(value = "okxeUserInfoServiceImpl")
     private IUserInfoService userInfoService;
     @Autowired
+    private PlatFormConfigRepository configRepository;
+    @Autowired
     @Qualifier(value = "okxeOrderInfoServiceImpl")
     private IOrderInfoService orderInfoService;
-    @Autowired
-    private ITradeRecordWsService tradeRecordWsService;
     @Value("${trade.wait.second}")
     private Integer waitSecond;
     private DecimalFormat decimalFormat = new DecimalFormat("####.########");
 
-    /**
-     * 成交时间
-     */
-    private Date t1 = null;
-    private Logger logger = LoggerFactory.getLogger(OkxeOperatorServiceImpl.class);
+    private Logger logger = LoggerFactory.getLogger(OkxeOperatorServiceServiceImpl.class);
 
     @Override
     public void operate() {
+        PlatFormConfig okxePropertyConfig = PlatConfigContext.getCurrentConfig();
         try {
             String symbol = okxePropertyConfig.getU1() + "_" + okxePropertyConfig.getU2();
-            List<Double> prices = quotationCommonService.getLocalNewPrice(symbol);
+            List<Double> prices = quotationCommonService.getLocalNewPrice(symbol, PlatType.OKXE);
             if (prices.size() < IQuotationCommonService.DATA_SIZE) {
                 okxePropertyConfig.setTradeOrNot(false);
+                configRepository.save(okxePropertyConfig);
                 throw new RuntimeException("抓取数据不足,自动关闭交易" + IQuotationCommonService.DATA_SIZE);
             }
             //前20个价格均值
@@ -105,10 +102,6 @@ public class OkxeOperatorServiceImpl implements IOperatorService {
                 } else {
                     logger.info("获取{}余额为:{}", okxePropertyConfig.getU2(), decimalFormat.format(d4));
                 }
-                if (d2.doubleValue() == okxePropertyConfig.getD1().doubleValue()) {
-                    //记录时间
-                    t1 = new Date();
-                }
                 if (okxePropertyConfig.getD1().doubleValue() > d2.doubleValue() || okxePropertyConfig.getD3() > d4.doubleValue()) {
                     logger.info(String.format("余额不足,终止运行,d1=%f,d2=%f,d3=%f,d4=%f", okxePropertyConfig.getD1(), d2, okxePropertyConfig.getD3(), d4));
                     //不运行
@@ -118,7 +111,7 @@ public class OkxeOperatorServiceImpl implements IOperatorService {
                     buy(symbol, prices.get(0), lb);
                 } else if (okxePropertyConfig.getD1().doubleValue() < d2.doubleValue()) {
                     //取消所有订单
-                    String[] successOrderIds = getCancelOrders(orderInfoService.getOrderInfo("-1", symbol));
+                    String[] successOrderIds = getCancelOrders(orderInfoService.getOpenOrderInfo("-1", symbol));
                     if (successOrderIds != null) {
                         for (int i = 0; i < successOrderIds.length; i++) {
                             String orders = successOrderIds[i];
@@ -159,9 +152,10 @@ public class OkxeOperatorServiceImpl implements IOperatorService {
                     double sellAmount = d2 - okxePropertyConfig.getD1();
                     double perAmount = sellAmount / 5.0;
                     //获取整点的收盘价
-                    prices = quotationCommonService.getHourPrice(symbol);
+                    prices = quotationCommonService.getHourPrice(symbol, PlatType.OKXE);
                     if (prices.size() < IQuotationCommonService.DATA_SIZE) {
                         okxePropertyConfig.setTradeOrNot(false);
+                        configRepository.save(okxePropertyConfig);
                         throw new RuntimeException("抓取数据不足,自动关闭交易" + IQuotationCommonService.DATA_SIZE);
                     }
                     //重新计算整点标准差
@@ -185,6 +179,7 @@ public class OkxeOperatorServiceImpl implements IOperatorService {
 
 
     private void buy(String symbol, Double currentPrice, Double lb) {
+        PlatFormConfig okxePropertyConfig = PlatConfigContext.getCurrentConfig();
         if (currentPrice != null) {
             if (currentPrice > lb) {
                 //在LB价格位置买入S1手
@@ -194,18 +189,10 @@ public class OkxeOperatorServiceImpl implements IOperatorService {
                 double buyPrice = currentPrice * okxePropertyConfig.getB1();
                 tradeService.coinTrade(symbol, TradeType.BUY, buyPrice, okxePropertyConfig.getS1());
             }
-            //记录成交时间
-            t1 = new Date();
         }
     }
 
-    //    @PostConstruct
-    private void regRecord() {
-        logger.info("订阅交易记录");
-        tradeRecordWsService.tradeRecord(okxePropertyConfig.getU1() + "_" + okxePropertyConfig.getU2());
-    }
-
-    public static String[] getCancelOrders(List<OrderInfoDTO> orders) {
+    private static String[] getCancelOrders(List<OrderInfoDTO> orders) {
         if (orders.size() <= 0) {
             return null;
         }
@@ -244,4 +231,5 @@ public class OkxeOperatorServiceImpl implements IOperatorService {
         }
         return orderIds;
     }
+
 }

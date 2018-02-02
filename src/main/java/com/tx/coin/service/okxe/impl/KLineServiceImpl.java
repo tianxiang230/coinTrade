@@ -26,9 +26,9 @@ import java.util.*;
  * @Description
  * @date 2018-1-13 22:57
  */
-@Service
+//@Service
 public class KLineServiceImpl implements IKLineService {
-    @Autowired
+    //    @Autowired
     private OkxePropertyConfig okxePropertyConfig;
     @Value("${coin.remote.kline}")
     private String klineUrl;

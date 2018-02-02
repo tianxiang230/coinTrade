@@ -3,6 +3,7 @@ package com.tx.coin;
 import com.tx.coin.entity.OrderRecord;
 import com.tx.coin.entity.Quotations;
 import com.tx.coin.enums.OrderType;
+import com.tx.coin.enums.PlatType;
 import com.tx.coin.enums.TradeType;
 import com.tx.coin.repository.OrderRecordRepository;
 import com.tx.coin.repository.QuotationsRepository;
@@ -45,7 +46,7 @@ public class ApplicationTest {
 
     @Test
     public void findBySymbol(){
-        List<Quotations> list=quotationsRepository.findDistinctBySymbolOrderByDate("ltc_btc",39);
+        List<Quotations> list = quotationsRepository.findDistinctBySymbolOrderByDate("ltc_btc", PlatType.OKXE.getCode(), 39);
         for(int i=0;i<list.size();i++){
             System.out.println(i+"\t"+list.get(i).getId());
         }

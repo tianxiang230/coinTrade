@@ -3,7 +3,9 @@ package com.tx.coin.service.okxe.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tx.coin.config.OkxePropertyConfig;
+import com.tx.coin.context.PlatConfigContext;
 import com.tx.coin.entity.OrderRecord;
+import com.tx.coin.entity.PlatFormConfig;
 import com.tx.coin.enums.OrderType;
 import com.tx.coin.enums.ResponseCode;
 import com.tx.coin.enums.TradeType;
@@ -32,8 +34,8 @@ import java.util.Map;
  */
 @Service
 public class OkxeCoinTradeServiceImpl implements ICoinTradeService {
-    @Autowired
-    private OkxePropertyConfig okxePropertyConfig;
+    //    @Autowired
+//    private OkxePropertyConfig okxePropertyConfig;
     @Autowired
     private OrderRecordRepository orderRecordRepository;
     @Value("${coin.remote.trade}")
@@ -48,6 +50,7 @@ public class OkxeCoinTradeServiceImpl implements ICoinTradeService {
 
     @Override
     public String coinTrade(String symbol, TradeType tradeType, double price, double amount) {
+        PlatFormConfig okxePropertyConfig = PlatConfigContext.getCurrentConfig();
         decimalFormat.setRoundingMode(RoundingMode.DOWN);
         logger.info(String.format("执行交易[%s]操作,交易币种[%s],价格[%f],交易量[%f]", tradeType.getName(), symbol, price, amount));
         if (StringUtils.isBlank(symbol) || price <= 0 || amount <= 0) {
@@ -101,6 +104,7 @@ public class OkxeCoinTradeServiceImpl implements ICoinTradeService {
 
     @Override
     public boolean cancelTrade(String symbol, String orderId) {
+        PlatFormConfig okxePropertyConfig = PlatConfigContext.getCurrentConfig();
         if (StringUtils.isBlank(symbol) || StringUtils.isBlank(orderId)) {
             logger.info("取消订单,缺少必要参数,symbol:{},orderId:{}", symbol, orderId);
             return false;
