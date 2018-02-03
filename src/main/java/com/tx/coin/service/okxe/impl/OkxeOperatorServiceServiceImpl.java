@@ -2,7 +2,6 @@ package com.tx.coin.service.okxe.impl;
 
 import com.tx.coin.context.PlatConfigContext;
 import com.tx.coin.dto.OrderInfoDTO;
-import com.tx.coin.dto.UserInfoDTO;
 import com.tx.coin.entity.PlatFormConfig;
 import com.tx.coin.enums.OrderStateEnum;
 import com.tx.coin.enums.PlatType;
@@ -15,7 +14,6 @@ import com.tx.coin.service.IUserInfoService;
 import com.tx.coin.service.common.IQuotationCommonService;
 import com.tx.coin.utils.MathUtil;
 import com.tx.coin.utils.PriceUtil;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -25,7 +23,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
@@ -116,7 +113,7 @@ public class OkxeOperatorServiceServiceImpl implements IOperatorService {
                             tradeService.cancelTrade(symbol, orders);
                         }
                         //5秒后卖出
-                        sleep(5);
+                        sleep(waitSecond);
                         //取消订单后等待几秒钟再重新获取余额
                         userInfoMap = userInfoService.getUserInfo();
                         if (userInfoMap != null) {

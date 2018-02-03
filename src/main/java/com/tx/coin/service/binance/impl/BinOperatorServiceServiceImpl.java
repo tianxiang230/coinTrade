@@ -2,7 +2,6 @@ package com.tx.coin.service.binance.impl;
 
 import com.tx.coin.context.PlatConfigContext;
 import com.tx.coin.dto.OrderInfoDTO;
-import com.tx.coin.dto.UserInfoDTO;
 import com.tx.coin.entity.PlatFormConfig;
 import com.tx.coin.enums.PlatType;
 import com.tx.coin.enums.TradeType;
@@ -14,7 +13,6 @@ import com.tx.coin.service.IUserInfoService;
 import com.tx.coin.service.common.IQuotationCommonService;
 import com.tx.coin.utils.MathUtil;
 import com.tx.coin.utils.PriceUtil;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +21,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
@@ -111,12 +108,7 @@ public class BinOperatorServiceServiceImpl implements IOperatorService {
                             tradeService.cancelTrade(symbol, orderId);
                         }
                         //5秒后卖出
-                        try {
-                            Thread.sleep(waitSecond * 1000);
-                            logger.info("等待{}秒", waitSecond);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        sleep(waitSecond);
                         //取消订单后等待几秒钟再重新获取余额
                         userInfoMap = userInfoService.getUserInfo();
                         if (userInfoMap != null) {
@@ -147,9 +139,13 @@ public class BinOperatorServiceServiceImpl implements IOperatorService {
                     double ub = mb + 2 * adv;
                     logger.info("【币安】标准差:{},平均值:{},卖出UB:{}", new Object[]{decimalFormat.format(adv), decimalFormat.format(mb), decimalFormat.format(ub)});
                     tradeService.coinTrade(symbol, TradeType.SELL, ub * binPropertyConfig.getY1(), perAmount);
+                    sleep(1);
                     tradeService.coinTrade(symbol, TradeType.SELL, ub * binPropertyConfig.getY2(), perAmount);
+                    sleep(1);
                     tradeService.coinTrade(symbol, TradeType.SELL, ub * binPropertyConfig.getY3(), perAmount);
+                    sleep(1);
                     tradeService.coinTrade(symbol, TradeType.SELL, ub * binPropertyConfig.getY4(), perAmount);
+                    sleep(1);
                     tradeService.coinTrade(symbol, TradeType.SELL, ub * binPropertyConfig.getY5(), sellAmount - 4.0 * perAmount);
                 }
             } else {
@@ -171,6 +167,14 @@ public class BinOperatorServiceServiceImpl implements IOperatorService {
                 double buyPrice = currentPrice * okxePropertyConfig.getB1();
                 tradeService.coinTrade(symbol, TradeType.BUY, buyPrice, okxePropertyConfig.getS1());
             }
+        }
+    }
+
+    private void sleep(int sleepSecond) {
+        try {
+            Thread.sleep(sleepSecond * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
