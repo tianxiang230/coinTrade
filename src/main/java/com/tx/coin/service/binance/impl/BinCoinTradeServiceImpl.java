@@ -8,6 +8,7 @@ import com.binance.api.client.domain.TimeInForce;
 import com.binance.api.client.domain.account.NewOrder;
 import com.binance.api.client.domain.account.NewOrderResponse;
 import com.binance.api.client.domain.account.request.CancelOrderRequest;
+import com.binance.api.client.exception.BinanceApiException;
 import com.tx.coin.entity.OrderRecord;
 import com.tx.coin.enums.TradeType;
 import com.tx.coin.repository.OrderRecordRepository;
@@ -36,13 +37,16 @@ public class BinCoinTradeServiceImpl implements ICoinTradeService {
     private BinanceApiRestClient restClient;
     @Autowired
     private OrderRecordRepository orderRecordRepository;
-    private DecimalFormat decimalFormat = new DecimalFormat("####.########");
+    private DecimalFormat decimalFormat = new DecimalFormat("####.#######");
+    private DecimalFormat amountFormat = new DecimalFormat("####.##");
 
     @Override
     public String coinTrade(String symbol, TradeType tradeType, double price, double amount) {
-        logger.info("币安请求[" + (tradeType == TradeType.BUY ? "购买" : "出售") + "]交易,symbol:{},数量:{},价格:{}", new Object[]{symbol, amount, decimalFormat.format(price)});
+        String dealPrice = decimalFormat.format(price);
+        String dealAmount = amountFormat.format(amount);
+        logger.info("币安请求[" + (tradeType == TradeType.BUY ? "购买" : "出售") + "]交易,symbol:{},数量:{},价格:{}", new Object[]{symbol, dealAmount, dealPrice});
         if (StringUtils.isBlank(symbol) || price <= 0 || amount <= 0) {
-            logger.info("交易参数不合法,symbol:{},price:{},amount:{}", new Object[]{symbol, price, amount});
+            logger.info("交易参数不合法,symbol:{},price:{},amount:{}", new Object[]{symbol, dealPrice, dealAmount});
             return null;
         }
         if (price == 0 || amount == 0) {
@@ -50,8 +54,14 @@ public class BinCoinTradeServiceImpl implements ICoinTradeService {
             return null;
         }
         OrderSide orderSide = tradeType == TradeType.SELL ? OrderSide.SELL : OrderSide.BUY;
-        NewOrder newOrder = new NewOrder(symbol, orderSide, OrderType.LIMIT, TimeInForce.GTC, String.valueOf(amount), decimalFormat.format(price));
-        NewOrderResponse orderResponse = restClient.newOrder(newOrder);
+        NewOrder newOrder = new NewOrder(symbol, orderSide, OrderType.LIMIT, TimeInForce.GTC, dealAmount, dealPrice);
+        NewOrderResponse orderResponse = null;
+        try {
+            orderResponse = restClient.newOrder(newOrder);
+        } catch (BinanceApiException e) {
+            logger.info("币安交易失败:{}", ExceptionUtils.getStackTrace(e));
+            return null;
+        }
         logger.info("币安交易响应:{}", JSON.toJSONString(orderResponse));
         String orderId = orderResponse.getOrderId().toString();
         OrderRecord orderRecord = new OrderRecord(symbol, tradeType, com.tx.coin.enums.OrderType.COMPLETED, price, amount);

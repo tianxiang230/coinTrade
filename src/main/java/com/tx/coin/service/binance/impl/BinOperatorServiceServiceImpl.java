@@ -135,7 +135,7 @@ public class BinOperatorServiceServiceImpl implements IOperatorService {
                     double sellAmount = d2 - binPropertyConfig.getD1();
                     double perAmount = sellAmount / 5.0;
                     //获取整点的收盘价
-                    prices = quotationCommonService.getHourPrice(symbol, PlatType.OKXE);
+                    prices = quotationCommonService.getHourPrice(symbol, PlatType.BIN);
                     if (prices.size() < IQuotationCommonService.DATA_SIZE) {
                         binPropertyConfig.setTradeOrNot(false);
                         configRepository.save(binPropertyConfig);
@@ -145,7 +145,7 @@ public class BinOperatorServiceServiceImpl implements IOperatorService {
                     adv = PriceUtil.calcuMd(prices);
                     mb = MathUtil.avg(prices);
                     double ub = mb + 2 * adv;
-                    logger.info("【币安】标准差:{},平均值:{},卖出UB:{}", new Object[]{adv, mb, ub});
+                    logger.info("【币安】标准差:{},平均值:{},卖出UB:{}", new Object[]{decimalFormat.format(adv), decimalFormat.format(mb), decimalFormat.format(ub)});
                     tradeService.coinTrade(symbol, TradeType.SELL, ub * binPropertyConfig.getY1(), perAmount);
                     tradeService.coinTrade(symbol, TradeType.SELL, ub * binPropertyConfig.getY2(), perAmount);
                     tradeService.coinTrade(symbol, TradeType.SELL, ub * binPropertyConfig.getY3(), perAmount);

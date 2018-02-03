@@ -40,7 +40,7 @@ public class AbnormalTest {
 
     @Test
     public void test(){
-        DecimalFormat decimalFormat = new DecimalFormat("####.########");
+        DecimalFormat decimalFormat = new DecimalFormat("####.#######");
         decimalFormat.setRoundingMode(RoundingMode.DOWN);
         System.out.println(decimalFormat.format(2.34564376587));
 

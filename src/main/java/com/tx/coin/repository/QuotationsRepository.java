@@ -15,7 +15,7 @@ public interface QuotationsRepository extends JpaRepository<Quotations, Integer>
     @Query(value = "SELECT q.id,q.buy,q.high,q.last,q.sell,q.low,q.vol,q.create_time,q.date,q.symbol FROM quotations q WHERE q.symbol=:symbol AND q.plat=:plat ORDER BY q.date desc LIMIT :pageSize", nativeQuery = true)
     List<Quotations> findDistinctBySymbolOrderByDate(@Param("symbol") String symbol, @Param("plat") String plat, @Param("pageSize") int size);
 
-    @Query(value = "SELECT q.last from quotations q where q.create_time like '%:00:%' and q.symbol=:symbol AND q.plat:plat ORDER BY q.date desc LIMIT :pageSize", nativeQuery = true)
+    @Query(value = "SELECT q.last from quotations q where q.create_time like '%:00:%' and q.symbol=:symbol AND q.plat=:plat ORDER BY q.date desc LIMIT :pageSize", nativeQuery = true)
     List<Double> findHourBySymbolOrderByDate(@Param("symbol") String symbol, @Param("plat") String plat, @Param("pageSize") int size);
 
     @Query(value = "SELECT q.last FROM quotations q WHERE q.symbol=:symbol AND q.plat=:plat ORDER BY q.date desc LIMIT :pageSize", nativeQuery = true)

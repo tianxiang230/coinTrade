@@ -40,7 +40,7 @@ public class BinQuotationJob {
 
     private Logger logger = LoggerFactory.getLogger(BinQuotationJob.class);
 
-    @Scheduled(cron = "0 0/2 * * * ?")
+    @Scheduled(cron = "0 0/15 * * * ?")
     public void execute() {
         PlatFormConfig platFormConfig = configRepository.selectByPlat(PlatType.BIN.getCode());
         if (platFormConfig == null) {
@@ -51,14 +51,17 @@ public class BinQuotationJob {
 
         final String symbol = platFormConfig.getU1() + platFormConfig.getU2();
         Quotations quotations = quotationService.getQuotation(symbol);
-        quotations.setSymbol(symbol);
-        quotations.setDate(quotations.getCreateDate());
-        quotations.setPlat(PlatType.BIN.getCode());
-        quotations.setCreateDate(DateUtil.getFormatDateTime(new Date()));
-        quotations = quotationsRepository.save(quotations);
         if (quotations != null) {
-            logger.info("币安存入最新行情成功");
+            quotations.setSymbol(symbol);
+            quotations.setDate(quotations.getCreateDate());
+            quotations.setPlat(PlatType.BIN.getCode());
+            quotations.setCreateDate(DateUtil.getFormatDateTime(new Date()));
+            quotations = quotationsRepository.save(quotations);
+            if (quotations != null) {
+                logger.info("币安存入最新行情成功");
+            }
         }
+
         if (platFormConfig.getTradeOrNot()) {
             //执行交易流程
             operatorService.operate();
