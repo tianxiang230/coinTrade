@@ -91,14 +91,15 @@ public class BinOperatorServiceServiceImpl implements IOperatorService {
                 } else {
                     logger.info("币安获取{}余额为:{}", binPropertyConfig.getU2(), decimalFormat.format(d4));
                 }
-                if (binPropertyConfig.getD1().doubleValue() > d2.doubleValue() || binPropertyConfig.getD3() > d4.doubleValue()) {
+                //允许间隔为1
+                if (binPropertyConfig.getD1().doubleValue() - 1 > d2.doubleValue() || binPropertyConfig.getD3() - 1 > d4.doubleValue()) {
                     logger.info(String.format("余额不足,终止运行,d1=%f,d2=%f,d3=%f,d4=%f", binPropertyConfig.getD1(), d2, binPropertyConfig.getD3(), d4));
                     //不运行
                     return;
                 }
                 if (binPropertyConfig.getD1().doubleValue() == d2.doubleValue()) {
                     buy(symbol, prices.get(0), lb);
-                } else if (binPropertyConfig.getD1().doubleValue() < d2.doubleValue()) {
+                } else {
                     //取消所有订单
                     List<OrderInfoDTO> orders = orderInfoService.getOpenOrderInfo("-1", symbol);
                     if (orders != null && orders.size() > 0) {

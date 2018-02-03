@@ -93,14 +93,14 @@ public class OkxeOperatorServiceServiceImpl implements IOperatorService {
                 } else {
                     logger.info("获取{}余额为:{}", okxePropertyConfig.getU2(), decimalFormat.format(d4));
                 }
-                if (okxePropertyConfig.getD1().doubleValue() > d2.doubleValue() || okxePropertyConfig.getD3() > d4.doubleValue()) {
+                if (okxePropertyConfig.getD1().doubleValue() - 1 > d2.doubleValue() || okxePropertyConfig.getD3() - 1 > d4.doubleValue()) {
                     logger.info(String.format("余额不足,终止运行,d1=%f,d2=%f,d3=%f,d4=%f", okxePropertyConfig.getD1(), d2, okxePropertyConfig.getD3(), d4));
                     //不运行
                     return;
                 }
                 if (okxePropertyConfig.getD1().doubleValue() == d2.doubleValue()) {
                     buy(symbol, prices.get(0), lb);
-                } else if (okxePropertyConfig.getD1().doubleValue() < d2.doubleValue()) {
+                } else {
                     //取消所有订单
                     String[] successOrderIds = getCancelOrders(orderInfoService.getOpenOrderInfo("-1", symbol));
                     if (successOrderIds != null) {
