@@ -12,6 +12,7 @@ import com.tx.coin.service.IUserInfoService;
 import com.tx.coin.utils.EncryptHelper;
 import com.tx.coin.utils.HttpUtil;
 import com.tx.coin.utils.JsonMapper;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,8 +38,9 @@ public class OkxeUserInfoServiceImpl implements IUserInfoService {
 
     private Logger logger = LoggerFactory.getLogger(OkxeUserInfoServiceImpl.class);
     @Override
-    public UserInfoDTO getUserInfo() {
+    public Map<String,Object> getUserInfo() {
         PlatFormConfig okxePropertyConfig = PlatConfigContext.getCurrentConfig();
+        Map<String,Object> resultMap=null;
         if (okxePropertyConfig == null) {
             okxePropertyConfig = configRepository.selectByPlat(PlatType.OKXE.getCode());
         }
@@ -59,7 +62,16 @@ public class OkxeUserInfoServiceImpl implements IUserInfoService {
                     JsonNode freeNode=rootNode.get("info").get("funds").get("free");
                     String freeStr=freeNode.toString();
                     UserInfoDTO userInfo=mapper.readValue(freeStr,UserInfoDTO.class);
-                    return userInfo;
+                    try{
+                        resultMap=BeanUtils.describe(userInfo);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchMethodException e) {
+                        e.printStackTrace();
+                    }
+                    return resultMap;
                 }else{
                     logger.info("获取用户信息失败");
                 }

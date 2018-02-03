@@ -78,13 +78,7 @@ public class OkxeOperatorServiceServiceImpl implements IOperatorService {
 //        double ub = mb + 2 * adv;
             double lb = mb - 2 * adv;
             logger.info("买入lb:{}", lb);
-            UserInfoDTO userInfo = userInfoService.getUserInfo();
-            Map<String, Object> userInfoMap = null;
-            try {
-                userInfoMap = BeanUtils.describe(userInfo);
-            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                e.printStackTrace();
-            }
+            Map<String,Object> userInfoMap = userInfoService.getUserInfo();
             if (userInfoMap != null) {
                 //底仓方账户余额
                 Double d2 = Double.valueOf(userInfoMap.get(okxePropertyConfig.getU1()).toString());
@@ -122,19 +116,9 @@ public class OkxeOperatorServiceServiceImpl implements IOperatorService {
                             tradeService.cancelTrade(symbol, orders);
                         }
                         //5秒后卖出
-                        try {
-                            Thread.sleep(waitSecond * 1000);
-                            logger.info("等待{}秒", waitSecond);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        sleep(5);
                         //取消订单后等待几秒钟再重新获取余额
-                        userInfo = userInfoService.getUserInfo();
-                        try {
-                            userInfoMap = BeanUtils.describe(userInfo);
-                        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                            e.printStackTrace();
-                        }
+                        userInfoMap = userInfoService.getUserInfo();
                         if (userInfoMap != null) {
                             //底仓方账户余额
                             d2 = Double.valueOf(userInfoMap.get(okxePropertyConfig.getU1()).toString());
@@ -164,9 +148,13 @@ public class OkxeOperatorServiceServiceImpl implements IOperatorService {
                     double ub = mb + 2 * adv;
                     logger.info("标准差:{},平均值:{},卖出UB:{}", new Object[]{adv, mb, ub});
                     tradeService.coinTrade(symbol, TradeType.SELL, ub * okxePropertyConfig.getY1(), perAmount);
+                    sleep(1);
                     tradeService.coinTrade(symbol, TradeType.SELL, ub * okxePropertyConfig.getY2(), perAmount);
+                    sleep(1);
                     tradeService.coinTrade(symbol, TradeType.SELL, ub * okxePropertyConfig.getY3(), perAmount);
+                    sleep(1);
                     tradeService.coinTrade(symbol, TradeType.SELL, ub * okxePropertyConfig.getY4(), perAmount);
+                    sleep(1);
                     tradeService.coinTrade(symbol, TradeType.SELL, ub * okxePropertyConfig.getY5(), sellAmount - 4.0 * perAmount);
                 }
             } else {
@@ -232,4 +220,12 @@ public class OkxeOperatorServiceServiceImpl implements IOperatorService {
         return orderIds;
     }
 
+    private void sleep(int waitSecond) {
+        try {
+            Thread.sleep(waitSecond * 1000);
+            logger.info("等待{}秒", waitSecond);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

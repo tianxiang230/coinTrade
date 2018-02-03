@@ -40,7 +40,7 @@ public class BinQuotationJob {
 
     private Logger logger = LoggerFactory.getLogger(BinQuotationJob.class);
 
-    @Scheduled(cron = "0 0/15 * * * ?")
+    @Scheduled(cron = "0 0/2 * * * ?")
     public void execute() {
         PlatFormConfig platFormConfig = configRepository.selectByPlat(PlatType.BIN.getCode());
         if (platFormConfig == null) {
@@ -53,7 +53,7 @@ public class BinQuotationJob {
         Quotations quotations = quotationService.getQuotation(symbol);
         quotations.setSymbol(symbol);
         quotations.setDate(quotations.getCreateDate());
-        quotations.setPlat(PlatType.OKXE.getCode());
+        quotations.setPlat(PlatType.BIN.getCode());
         quotations.setCreateDate(DateUtil.getFormatDateTime(new Date()));
         quotations = quotationsRepository.save(quotations);
         if (quotations != null) {

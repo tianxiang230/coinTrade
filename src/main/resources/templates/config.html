@@ -32,7 +32,7 @@
                         <label class="control-label col-sm-2" th:label="AK">AK：</label>
                         <div class="controls col-sm-10">
                             <input type="text" placeholder="APPKEY" name="apiKey" th:value="${config.apiKey}"
-                                   class="form-control" th:disabled="true"/>
+                                   class="form-control" th:readonly="true"/>
                             <p class="help-block"></p>
                         </div>
                     </div>
@@ -53,7 +53,7 @@
                         <!-- Text input-->
                         <label class="control-label col-sm-2" th:label="u2">U2：</label>
                         <div class="controls col-sm-10">
-                            <select name="u1" title="ASK方" class="selectpicker">
+                            <select name="u2" title="ASK方" class="selectpicker">
                                 <option>未选择...</option>
                                 <option th:each="ask:${symbols.askSymbol}" th:value="${ask}" th:text="${ask}"
                                         th:selected="${config.u2==ask}"></option>
@@ -109,7 +109,7 @@
                         <label class="control-label col-sm-2" th:label="SK">SK：</label>
                         <div class="controls col-sm-10">
                             <input type="text" placeholder="SECRETKEY" name="secretKey" th:value="${config.secretKey}"
-                                   class="form-control" th:disabled="true"/>
+                                   class="form-control" th:readonly="true"/>
                             <p class="help-block"></p>
                         </div>
                     </div>
@@ -195,9 +195,9 @@
             $("select[name=u1]").focus();
             return;
         }
-        var u2 = $("input[name=u2]").val();
+        var u2 = $("select[name=u2]").val();
         if (u2 == undefined || u2 == '') {
-            $("input[name=u2]").focus();
+            $("select[name=u2]").focus();
             return;
         }
         var d1 = $("input[name=d1]").val();

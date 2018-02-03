@@ -64,6 +64,7 @@ public class BinOperatorServiceServiceImpl implements IOperatorService {
             List<Double> prices = quotationCommonService.getLocalNewPrice(symbol, PlatType.BIN);
             if (prices.size() < IQuotationCommonService.DATA_SIZE) {
                 binPropertyConfig.setTradeOrNot(false);
+                configRepository.save(binPropertyConfig);
                 throw new RuntimeException("抓取数据不足,自动关闭交易" + IQuotationCommonService.DATA_SIZE);
             }
             //前20个价格均值
@@ -74,13 +75,8 @@ public class BinOperatorServiceServiceImpl implements IOperatorService {
 //        double ub = mb + 2 * adv;
             double lb = mb - 2 * adv;
             logger.info("买入lb:{}", lb);
-            UserInfoDTO userInfo = userInfoService.getUserInfo();
-            Map<String, Object> userInfoMap = null;
-            try {
-                userInfoMap = BeanUtils.describe(userInfo);
-            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                e.printStackTrace();
-            }
+            Map<String, Object> userInfoMap = userInfoService.getUserInfo();
+
             if (userInfoMap != null) {
                 //底仓方账户余额
                 Double d2 = Double.valueOf(userInfoMap.get(binPropertyConfig.getU1()).toString());
@@ -122,12 +118,7 @@ public class BinOperatorServiceServiceImpl implements IOperatorService {
                             e.printStackTrace();
                         }
                         //取消订单后等待几秒钟再重新获取余额
-                        userInfo = userInfoService.getUserInfo();
-                        try {
-                            userInfoMap = BeanUtils.describe(userInfo);
-                        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                            e.printStackTrace();
-                        }
+                        userInfoMap = userInfoService.getUserInfo();
                         if (userInfoMap != null) {
                             //底仓方账户余额
                             d2 = Double.valueOf(userInfoMap.get(binPropertyConfig.getU1()).toString());

@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author 你慧快乐
@@ -24,31 +26,20 @@ public class BinUserInfoServiceImpl implements IUserInfoService {
     private BinanceApiRestClient restClient;
 
     @Override
-    public UserInfoDTO getUserInfo() {
+    public Map<String, Object> getUserInfo() {
         Account account = restClient.getAccount();
         return convertToUserInfo(account);
     }
 
 
-    private UserInfoDTO convertToUserInfo(Account account) {
-        UserInfoDTO userInfo = new UserInfoDTO();
+    private Map<String,Object> convertToUserInfo(Account account) {
+        Map<String,Object> userInfo = new HashMap<>();
         if (account == null || account.getBalances() == null || account.getBalances().size() == 0) {
             return userInfo;
         }
-        Field fields[] = userInfo.getClass().getDeclaredFields();
         List<AssetBalance> balances = account.getBalances();
         for (AssetBalance assetBalance : balances) {
-            for (Field field : fields) {
-                String name = field.getName();
-                if (assetBalance.getAsset().equals(name.toUpperCase())) {
-                    try {
-                        field.setAccessible(true);
-                        field.set(userInfo, assetBalance.getFree());
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+            userInfo.put(assetBalance.getAsset(),assetBalance.getFree());
         }
         return userInfo;
     }

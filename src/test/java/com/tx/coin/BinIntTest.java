@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Map;
+
 /**
  * @author 你慧快乐
  * @version V1.0
@@ -31,7 +33,7 @@ public class BinIntTest {
 
     @Test
     public void testUserInfo() {
-        UserInfoDTO userInfoDTO = userInfoService.getUserInfo();
+        Map<String,Object> userInfoDTO = userInfoService.getUserInfo();
         System.out.println(JSON.toJSONString(userInfoDTO));
     }
 

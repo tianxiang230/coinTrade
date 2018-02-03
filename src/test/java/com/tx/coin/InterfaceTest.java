@@ -24,6 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 测试外部接口
@@ -63,7 +64,7 @@ public class InterfaceTest {
 
     @Test
     public void getUserInfo() {
-        UserInfoDTO userInfoDTO = userInfoService.getUserInfo();
+        Map<String,Object> userInfoDTO = userInfoService.getUserInfo();
         System.out.println(JsonMapper.nonDefaultMapper().toJson(userInfoDTO));
     }
 
