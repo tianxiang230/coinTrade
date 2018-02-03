@@ -117,13 +117,7 @@ public class OperatorServiceImpl implements IOperatorService {
                             }
                             tradeService.cancelTrade(symbol, orders);
                         }
-                        //5秒后卖出
-                        try {
-                            Thread.sleep(waitSecond * 1000);
-                            logger.info("等待{}秒", waitSecond);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        sleep(5);
                         //取消订单后等待几秒钟再重新获取余额
                         userInfo = userInfoService.getUserInfo();
                         try {
@@ -155,9 +149,13 @@ public class OperatorServiceImpl implements IOperatorService {
                     double ub = mb + 2 * adv;
                     logger.info("标准差:{},平均值:{},卖出UB:{}", new Object[]{adv, mb, ub});
                     tradeService.coinTrade(symbol, TradeType.SELL, ub * propertyConfig.getY1(), perAmount);
+                    sleep(1);
                     tradeService.coinTrade(symbol, TradeType.SELL, ub * propertyConfig.getY2(), perAmount);
+                    sleep(1);
                     tradeService.coinTrade(symbol, TradeType.SELL, ub * propertyConfig.getY3(), perAmount);
+                    sleep(1);
                     tradeService.coinTrade(symbol, TradeType.SELL, ub * propertyConfig.getY4(), perAmount);
+                    sleep(1);
                     tradeService.coinTrade(symbol, TradeType.SELL, ub * propertyConfig.getY5(), sellAmount - 4.0 * perAmount);
                 }
             } else {
@@ -228,5 +226,13 @@ public class OperatorServiceImpl implements IOperatorService {
             orderIds[++index] = stringBuilder.substring(0, stringBuilder.length() - 1);
         }
         return orderIds;
+    }
+
+    private void sleep(int waitSecond) {
+        try {
+            Thread.sleep(waitSecond * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
