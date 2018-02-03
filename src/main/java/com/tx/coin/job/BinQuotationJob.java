@@ -40,7 +40,7 @@ public class BinQuotationJob {
 
     private Logger logger = LoggerFactory.getLogger(BinQuotationJob.class);
 
-    @Scheduled(cron = "0 0/2 * * * ?")
+    @Scheduled(cron = "0 0/15 * * * ?")
     public void execute() {
         PlatFormConfig platFormConfig = configRepository.selectByPlat(PlatType.BIN.getCode());
         if (platFormConfig == null) {
