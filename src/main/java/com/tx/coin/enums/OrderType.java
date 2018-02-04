@@ -8,18 +8,19 @@ package com.tx.coin.enums;
  * @date 2018-1-12 15:02
  */
 public enum OrderType {
-    COMPLETED(1,"已完成订单"),
-    NOT_COMPLETE(0,"未完成订单");
-    private int value;
+
+    NOT_COMPLETE("0", "未完成订单"),
+    COMPLETED("1", "已完成订单");
+    private String code;
     private String name;
 
-    OrderType(int value, String name) {
-        this.value = value;
+    OrderType(String code, String name) {
+        this.code = code;
         this.name = name();
     }
 
-    public int getValue() {
-        return value;
+    public String getValue() {
+        return code;
     }
 
     public String getName() {

@@ -38,7 +38,7 @@ public class OkxeQuotationJob {
     private Logger logger = LoggerFactory.getLogger(OkxeQuotationJob.class);
 
     //        @Scheduled(cron = "0 0/5 * * * ?")
-//    @Scheduled(cron = "0 0/15 * * * ?")
+    @Scheduled(cron = "0 0/15 * * * ?")
     public void execute() {
         PlatFormConfig platFormConfig = configRepository.selectByPlat(PlatType.OKXE.getCode());
         if (platFormConfig == null) {

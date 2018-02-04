@@ -37,11 +37,11 @@ public class SessionInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, ModelAndView modelAndView) throws Exception {
-        logger.info("拦截请求处理中");
+//        logger.info("拦截请求处理中");
     }
 
     @Override
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
-        logger.info("拦截处理完毕");
+//        logger.info("拦截处理完毕");
     }
 }
