@@ -98,14 +98,14 @@ public class OperatorServiceImpl implements IOperatorService {
                     //记录时间
                     t1 = new Date();
                 }
-                if (propertyConfig.getD1().doubleValue() > d2.doubleValue() || propertyConfig.getD3() > d4.doubleValue()) {
+                if (propertyConfig.getD1().doubleValue() - 1 > d2.doubleValue() || propertyConfig.getD3() - 1 > d4.doubleValue()) {
                     logger.info(String.format("余额不足,终止运行,d1=%f,d2=%f,d3=%f,d4=%f", propertyConfig.getD1(), d2, propertyConfig.getD3(), d4));
                     //不运行
                     return;
                 }
                 if (propertyConfig.getD1().doubleValue() == d2.doubleValue()) {
                     buy(symbol, prices.get(0), lb);
-                } else if (propertyConfig.getD1().doubleValue() < d2.doubleValue()) {
+                } else {
                     //取消所有订单
                     String[] successOrderIds = getCancelOrders(orderInfoService.getOrderInfo("-1", symbol));
                     if (successOrderIds != null) {
@@ -231,6 +231,7 @@ public class OperatorServiceImpl implements IOperatorService {
     private void sleep(int waitSecond) {
         try {
             Thread.sleep(waitSecond * 1000);
+            logger.info("sleep for {} seconds", waitSecond);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -31,4 +31,4 @@ config:
 #补仓位置
   b1: 0.99
 
-  tradeOrNot: false
+  tradeOrNot: true

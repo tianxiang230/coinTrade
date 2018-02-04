@@ -31,7 +31,7 @@ public class PullQuotationJob {
     private PropertyConfig propertyConfig;
     private Logger logger = LoggerFactory.getLogger(PullQuotationJob.class);
 
-    //    @Scheduled(cron = "0 0/5 * * * ?")
+    //        @Scheduled(cron = "0 0/1 * * * ?")
     @Scheduled(cron = "0 0/15 * * * ?")
     public void execute() {
         final String symbol = propertyConfig.getU1() + "_" + propertyConfig.getU2();
