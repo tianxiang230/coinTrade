@@ -4,10 +4,7 @@ import com.tx.coin.enums.OrderType;
 import com.tx.coin.enums.TradeType;
 import com.tx.coin.utils.DateUtil;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -30,10 +27,11 @@ public class OrderRecord extends BaseEntity {
     private String orderId;
 
     @Column(name = "trade_type")
+    @Enumerated
     private TradeType tradeType;
 
     @Column(name = "order_type")
-    @Enumerated()
+    @Enumerated(value = EnumType.STRING)
     private OrderType orderType;
 
     @Column(nullable=false,length = 15)
