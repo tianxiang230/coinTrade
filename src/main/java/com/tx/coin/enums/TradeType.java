@@ -10,15 +10,17 @@ package com.tx.coin.enums;
  */
 public enum TradeType {
 
-    SELL("sell", "卖出"),
-    BUY("buy", "买入");
+    SELL("sell", "卖出", "0"),
+    BUY("buy", "买入", "1");
 
     private String code;
     private String name;
+    private String value;
 
-    TradeType(String code, String name) {
+    TradeType(String code, String name, String value) {
         this.code = code;
         this.name = name;
+        this.value = value;
     }
 
     public String getName() {
@@ -27,5 +29,9 @@ public enum TradeType {
 
     public String getCode() {
         return code;
+    }
+
+    public String getValue() {
+        return value;
     }
 }

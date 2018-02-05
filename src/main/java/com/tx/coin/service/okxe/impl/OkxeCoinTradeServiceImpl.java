@@ -33,8 +33,7 @@ import java.util.Map;
  */
 @Service
 public class OkxeCoinTradeServiceImpl implements ICoinTradeService {
-    //    @Autowired
-//    private OkxePropertyConfig okxePropertyConfig;
+
     @Autowired
     private OrderRecordRepository orderRecordRepository;
     @Value("${coin.remote.trade}")

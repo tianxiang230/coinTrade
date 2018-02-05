@@ -29,12 +29,6 @@ public class BinOrderInfoServiceImpl implements IOrderInfoService {
     private Logger logger = LoggerFactory.getLogger(BinOrderInfoServiceImpl.class);
 
     @Override
-    public List<OrderInfoDTO> getBatchOrdersInfo(String orderId, int type, String symbol) {
-        //没有使用到
-        return null;
-    }
-
-    @Override
     public List<OrderInfoDTO> getOpenOrderInfo(String orderId, String symbol) {
         OrderRequest orderRequest = new OrderRequest("INSBTC");
         List<Order> openOrders = restClient.getOpenOrders(orderRequest);

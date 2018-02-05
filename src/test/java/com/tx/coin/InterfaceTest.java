@@ -68,11 +68,6 @@ public class InterfaceTest {
         System.out.println(JsonMapper.nonDefaultMapper().toJson(userInfoDTO));
     }
 
-    @Test
-    public void getOrdersInfo() {
-        List<OrderInfoDTO> orderInfo = orderInfoService.getBatchOrdersInfo("123969940", 1, "etc_usdt");
-        System.out.println(JsonMapper.nonDefaultMapper().toJson(orderInfo));
-    }
 
     @Test
     public void getOrderInfo() {

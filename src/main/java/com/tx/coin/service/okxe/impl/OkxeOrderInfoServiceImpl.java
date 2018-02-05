@@ -26,8 +26,6 @@ import java.util.Map;
  */
 @Service
 public class OkxeOrderInfoServiceImpl implements IOrderInfoService {
-//    @Autowired
-//    private OkxePropertyConfig okxePropertyConfig;
 
     @Value("${coin.remote.ordersinfo}")
     private String ordersInfoUrl;
@@ -37,7 +35,6 @@ public class OkxeOrderInfoServiceImpl implements IOrderInfoService {
     private Logger logger = LoggerFactory.getLogger(OkxeOrderInfoServiceImpl.class);
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @Override
     public List<OrderInfoDTO> getBatchOrdersInfo(String orderId, int type, String symbol) {
         PlatFormConfig okxePropertyConfig = PlatConfigContext.getCurrentConfig();
         String apiKey = okxePropertyConfig.getApiKey();

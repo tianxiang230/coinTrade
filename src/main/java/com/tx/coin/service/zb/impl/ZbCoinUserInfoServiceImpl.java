@@ -10,6 +10,7 @@ import com.tx.coin.service.IUserInfoService;
 import com.tx.coin.utils.Digests;
 import com.tx.coin.utils.HttpUtil;
 import com.tx.coin.utils.SortMapUtil;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +77,7 @@ public class ZbCoinUserInfoServiceImpl implements IUserInfoService {
                 resultMap.put(key, amount);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.info("ZB获取用户信息出错，{}", ExceptionUtils.getStackTrace(e));
         }
         return resultMap;
     }
