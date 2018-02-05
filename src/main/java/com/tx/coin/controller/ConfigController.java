@@ -35,6 +35,9 @@ public class ConfigController {
     @Qualifier(value = "binSymbolServiceImpl")
     private ISymbolService binSymbolServiceImpl;
     @Autowired
+    @Qualifier(value = "zbSymbolServiceImpl")
+    private ISymbolService zbSystemServiceImpl;
+    @Autowired
     @Qualifier(value = "okxeSymbolServiceImpl")
     private ISymbolService okxeSymbolServiceImpl;
 
@@ -59,6 +62,8 @@ public class ConfigController {
             symbols = binSymbolServiceImpl.getSymbolPairs();
         } else if (plat != null && plat.equals(PlatType.OKXE.getCode())) {
             symbols = okxeSymbolServiceImpl.getSymbolPairs();
+        } else if (plat != null && plat.equals(PlatType.ZB.getCode())) {
+            symbols = zbSystemServiceImpl.getSymbolPairs();
         }
         model.addAttribute("symbols", symbols);
         if (StringUtils.isNotBlank(plat)) {

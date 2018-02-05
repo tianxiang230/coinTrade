@@ -24,7 +24,7 @@ import java.util.Map;
  * @date 2018-2-5 20:17
  */
 @Service
-public class ZbOrderInfoService implements IOrderInfoService {
+public class ZbOrderInfoServiceImpl implements IOrderInfoService {
     @Autowired
     private PlatFormConfigRepository configRepository;
     private final String remoteUrl = "https://trade.zb.com/api/getUnfinishedOrdersIgnoreTradeType";

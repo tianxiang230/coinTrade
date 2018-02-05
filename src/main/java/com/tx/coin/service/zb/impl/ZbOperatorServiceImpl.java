@@ -1,4 +1,4 @@
-package com.tx.coin.service.binance.impl;
+package com.tx.coin.service.zb.impl;
 
 import com.tx.coin.context.PlatConfigContext;
 import com.tx.coin.dto.OrderInfoDTO;
@@ -25,30 +25,31 @@ import java.util.Map;
 /**
  * @author 你慧快乐
  * @version V1.0
- * @Package com.tx.coin.service.binance.impl
+ * @Package com.tx.coin.service.zb.impl
  * @Description
- * @date 2018-1-31 19:30
+ * @date 2018-2-5 20:30
  */
 @Service
-public class BinOperatorServiceServiceImpl extends BaseOperatorService implements IOperatorService {
-    private Logger logger = LoggerFactory.getLogger(BinOperatorServiceServiceImpl.class);
+public class ZbOperatorServiceImpl extends BaseOperatorService implements IOperatorService {
     @Autowired
     private IQuotationCommonService quotationCommonService;
     @Autowired
-    @Qualifier(value = "binUserInfoServiceImpl")
-    private IUserInfoService userInfoService;
-    @Autowired
-    @Qualifier(value = "binCoinTradeServiceImpl")
+    @Qualifier(value = "zbCoinTradeServiceImpl")
     private ICoinTradeService tradeService;
+    @Autowired
+    @Qualifier(value = "zbCoinUserInfoServiceImpl")
+    private IUserInfoService userInfoService;
     @Autowired
     private PlatFormConfigRepository configRepository;
     @Autowired
-    @Qualifier(value = "binOrderInfoServiceImpl")
+    @Qualifier(value = "zbOrderInfoServiceImpl")
     private IOrderInfoService orderInfoService;
 
     @Value("${trade.wait.second}")
     private Integer waitSecond;
     private DecimalFormat decimalFormat = new DecimalFormat("####.########");
+    private Logger logger = LoggerFactory.getLogger(ZbOperatorServiceImpl.class);
+
 
     @Override
     protected ICoinTradeService getTradeService() {
@@ -60,7 +61,7 @@ public class BinOperatorServiceServiceImpl extends BaseOperatorService implement
         PlatFormConfig binPropertyConfig = PlatConfigContext.getCurrentConfig();
         try {
             String symbol = binPropertyConfig.getU1() + binPropertyConfig.getU2();
-            List<Double> prices = quotationCommonService.getLocalNewPrice(symbol, PlatType.BIN);
+            List<Double> prices = quotationCommonService.getLocalNewPrice(symbol, PlatType.ZB);
             if (prices.size() < IQuotationCommonService.DATA_SIZE) {
                 binPropertyConfig.setTradeOrNot(false);
                 configRepository.save(binPropertyConfig);
@@ -69,28 +70,27 @@ public class BinOperatorServiceServiceImpl extends BaseOperatorService implement
             //前20个价格均值
             double mb = MathUtil.avg(prices);
             //取得标准差
-
             double adv = PriceUtil.calcuMd(prices);
 //        double ub = mb + 2 * adv;
             double lb = mb - 2 * adv;
-            logger.info("买入lb:{}", lb);
+            logger.info("ZB买入lb:{}", lb);
             Map<String, Object> userInfoMap = userInfoService.getUserInfo();
             if (userInfoMap != null) {
                 //底仓方账户余额
                 Double d2 = Double.valueOf(userInfoMap.get(binPropertyConfig.getU1()).toString());
                 if (d2 == null) {
-                    logger.info("币安获取{}余额失败", binPropertyConfig.getU1());
+                    logger.info("ZB获取{}余额失败", binPropertyConfig.getU1());
                     return;
                 } else {
-                    logger.info("币安获取{}余额为:{}", binPropertyConfig.getU1(), decimalFormat.format(d2));
+                    logger.info("ZB获取{}余额为:{}", binPropertyConfig.getU1(), decimalFormat.format(d2));
                 }
                 //获取ASK方账户余额
                 Double d4 = Double.valueOf(userInfoMap.get(binPropertyConfig.getU2()).toString());
                 if (d4 == null) {
-                    logger.info("币安获取{}余额失败", binPropertyConfig.getU2());
+                    logger.info("ZB获取{}余额失败", binPropertyConfig.getU2());
                     return;
                 } else {
-                    logger.info("币安获取{}余额为:{}", binPropertyConfig.getU2(), decimalFormat.format(d4));
+                    logger.info("ZB获取{}余额为:{}", binPropertyConfig.getU2(), decimalFormat.format(d4));
                 }
                 //允许间隔为1
                 if (binPropertyConfig.getD1().doubleValue() - 1 > d2.doubleValue() || binPropertyConfig.getD3() - 1 > d4.doubleValue()) {
@@ -111,17 +111,17 @@ public class BinOperatorServiceServiceImpl extends BaseOperatorService implement
                     double sellAmount = d2 - binPropertyConfig.getD1();
                     double perAmount = sellAmount / 5.0;
                     //获取整点的收盘价
-                    prices = quotationCommonService.getHourPrice(symbol, PlatType.BIN);
+                    prices = quotationCommonService.getHourPrice(symbol, PlatType.ZB);
                     if (prices.size() < IQuotationCommonService.DATA_SIZE) {
                         binPropertyConfig.setTradeOrNot(false);
                         configRepository.save(binPropertyConfig);
-                        throw new RuntimeException("【币安】抓取数据不足,自动关闭交易" + IQuotationCommonService.DATA_SIZE);
+                        throw new RuntimeException("【ZB】抓取数据不足,自动关闭交易" + IQuotationCommonService.DATA_SIZE);
                     }
                     //重新计算整点标准差
                     adv = PriceUtil.calcuMd(prices);
                     mb = MathUtil.avg(prices);
                     double ub = mb + 2 * adv;
-                    logger.info("【币安】标准差:{},平均值:{},卖出UB:{}", new Object[]{decimalFormat.format(adv), decimalFormat.format(mb), decimalFormat.format(ub)});
+                    logger.info("【ZB】标准差:{},平均值:{},卖出UB:{}", new Object[]{decimalFormat.format(adv), decimalFormat.format(mb), decimalFormat.format(ub)});
                     tradeService.coinTrade(symbol, TradeType.SELL, ub * binPropertyConfig.getY1(), perAmount);
                     sleep(1);
                     tradeService.coinTrade(symbol, TradeType.SELL, ub * binPropertyConfig.getY2(), perAmount);
@@ -133,12 +133,13 @@ public class BinOperatorServiceServiceImpl extends BaseOperatorService implement
                     tradeService.coinTrade(symbol, TradeType.SELL, ub * binPropertyConfig.getY5(), sellAmount - 4.0 * perAmount);
                 }
             } else {
-                logger.info("币安获取余额失败");
+                logger.info("ZB获取余额失败");
             }
         } catch (Exception e) {
-            logger.info("币安用户资金操作出错,错误信息:{}", ExceptionUtils.getStackTrace(e));
+            logger.info("ZB用户资金操作出错,错误信息:{}", ExceptionUtils.getStackTrace(e));
         }
     }
+
 
     private Double cancelOrders(List<OrderInfoDTO> orders, String symbol) {
         PlatFormConfig binPropertyConfig = PlatConfigContext.getCurrentConfig();
@@ -147,7 +148,7 @@ public class BinOperatorServiceServiceImpl extends BaseOperatorService implement
         if (orders != null && orders.size() > 0) {
             for (int i = 0; i < orders.size(); i++) {
                 String orderId = orders.get(i).getOrderId();
-                logger.info("币安取消订单号为:{}", orderId);
+                logger.info("ZB取消订单号为:{}", orderId);
                 tradeService.cancelTrade(symbol, orderId);
             }
             //5秒后卖出
@@ -158,9 +159,9 @@ public class BinOperatorServiceServiceImpl extends BaseOperatorService implement
                 //底仓方账户余额
                 d2 = Double.valueOf(userInfoMap.get(binPropertyConfig.getU1()).toString());
                 if (d2 == null) {
-                    logger.info("币安重新获取{}余额失败", binPropertyConfig.getU1());
+                    logger.info("ZB重新获取{}余额失败", binPropertyConfig.getU1());
                 } else {
-                    logger.info("币安重新获取{}余额为:{}", binPropertyConfig.getU1(), decimalFormat.format(d2));
+                    logger.info("ZB重新获取{}余额为:{}", binPropertyConfig.getU1(), decimalFormat.format(d2));
                 }
             }
             //重新获取余额结束

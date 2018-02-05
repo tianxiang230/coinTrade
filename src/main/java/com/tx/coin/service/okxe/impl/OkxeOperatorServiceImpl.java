@@ -7,10 +7,7 @@ import com.tx.coin.enums.OrderStateEnum;
 import com.tx.coin.enums.PlatType;
 import com.tx.coin.enums.TradeType;
 import com.tx.coin.repository.PlatFormConfigRepository;
-import com.tx.coin.service.ICoinTradeService;
-import com.tx.coin.service.IOperatorService;
-import com.tx.coin.service.IOrderInfoService;
-import com.tx.coin.service.IUserInfoService;
+import com.tx.coin.service.*;
 import com.tx.coin.service.common.IQuotationCommonService;
 import com.tx.coin.utils.MathUtil;
 import com.tx.coin.utils.PriceUtil;
@@ -36,7 +33,7 @@ import java.util.Map;
  * @date 2018-1-12 18:51
  */
 @Component
-public class OkxeOperatorServiceServiceImpl implements IOperatorService {
+public class OkxeOperatorServiceImpl extends BaseOperatorService implements IOperatorService {
     @Autowired
     private IQuotationCommonService quotationCommonService;
     @Autowired
@@ -50,11 +47,12 @@ public class OkxeOperatorServiceServiceImpl implements IOperatorService {
     @Autowired
     @Qualifier(value = "okxeOrderInfoServiceImpl")
     private IOrderInfoService orderInfoService;
+
     @Value("${trade.wait.second}")
     private Integer waitSecond;
     private DecimalFormat decimalFormat = new DecimalFormat("####.########");
 
-    private Logger logger = LoggerFactory.getLogger(OkxeOperatorServiceServiceImpl.class);
+    private Logger logger = LoggerFactory.getLogger(OkxeOperatorServiceImpl.class);
 
     @Override
     public void operate() {
@@ -162,21 +160,6 @@ public class OkxeOperatorServiceServiceImpl implements IOperatorService {
         }
     }
 
-
-    private void buy(String symbol, Double currentPrice, Double lb) {
-        PlatFormConfig okxePropertyConfig = PlatConfigContext.getCurrentConfig();
-        if (currentPrice != null) {
-            if (currentPrice > lb) {
-                //在LB价格位置买入S1手
-                tradeService.coinTrade(symbol, TradeType.BUY, lb, okxePropertyConfig.getS1());
-            } else {
-                //在D2*(1-B1)位置买入S1手
-                double buyPrice = currentPrice * okxePropertyConfig.getB1();
-                tradeService.coinTrade(symbol, TradeType.BUY, buyPrice, okxePropertyConfig.getS1());
-            }
-        }
-    }
-
     private static String[] getCancelOrders(List<OrderInfoDTO> orders) {
         if (orders.size() <= 0) {
             return null;
@@ -217,12 +200,8 @@ public class OkxeOperatorServiceServiceImpl implements IOperatorService {
         return orderIds;
     }
 
-    private void sleep(int waitSecond) {
-        try {
-            Thread.sleep(waitSecond * 1000);
-            logger.info("等待{}秒", waitSecond);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    @Override
+    protected ICoinTradeService getTradeService() {
+        return tradeService;
     }
 }

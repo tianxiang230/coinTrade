@@ -23,45 +23,41 @@ import java.util.Date;
  * @version V1.0
  * @Package com.tx.coin.job
  * @Description
- * @date 2018-2-1 15:54
+ * @date 2018-2-5 21:14
  */
 @Component
-public class BinQuotationJob {
+public class ZbQuotationJob {
     @Autowired
-    @Qualifier(value = "binCoinQuotationServiceImpl")
+    @Qualifier(value = "zbCoinQuotationServiceImpl")
     private ICoinQuotationService quotationService;
     @Autowired
     private QuotationsRepository quotationsRepository;
     @Autowired
-    private PlatFormConfigRepository configRepository;
-    @Autowired
-    @Qualifier(value = "binOperatorServiceServiceImpl")
+    @Qualifier(value = "zbOperatorServiceImpl")
     private IOperatorService operatorService;
+    @Autowired
+    private PlatFormConfigRepository configRepository;
 
-    private Logger logger = LoggerFactory.getLogger(BinQuotationJob.class);
+    Logger logger = LoggerFactory.getLogger(ZbQuotationJob.class);
 
-    //    @Scheduled(cron = "0 0/15 * * * ?")
+    @Scheduled(cron = "0 0/1 * * * ?")
     public void execute() {
-        PlatFormConfig platFormConfig = configRepository.selectByPlat(PlatType.BIN.getCode());
+        PlatFormConfig platFormConfig = configRepository.selectByPlat(PlatType.ZB.getCode());
         if (platFormConfig == null) {
-            logger.info("尚未对币安平台做配置，执行结束");
+            logger.info("尚未对ZB平台做配置，执行结束");
             return;
         }
         PlatConfigContext.setCurrentConfig(platFormConfig);
 
-        final String symbol = platFormConfig.getU1() + platFormConfig.getU2();
+        final String symbol = platFormConfig.getU1() + "_" + platFormConfig.getU2();
         Quotations quotations = quotationService.getQuotation(symbol);
+        quotations.setSymbol(symbol);
+        quotations.setPlat(PlatType.ZB.getCode());
+        quotations.setCreateDate(DateUtil.getFormatDateTime(new Date()));
+        quotations = quotationsRepository.save(quotations);
         if (quotations != null) {
-            quotations.setSymbol(symbol);
-            quotations.setDate(quotations.getCreateDate());
-            quotations.setPlat(PlatType.BIN.getCode());
-            quotations.setCreateDate(DateUtil.getFormatDateTime(new Date()));
-            quotations = quotationsRepository.save(quotations);
-            if (quotations != null) {
-                logger.info("币安存入最新行情成功");
-            }
+            logger.info("ZB存入最新行情成功");
         }
-
         if (platFormConfig.getTradeOrNot()) {
             //执行交易流程
             operatorService.operate();

@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -31,14 +30,14 @@ public class OkxeQuotationJob {
     @Autowired
     private QuotationsRepository quotationsRepository;
     @Autowired
-    @Qualifier(value = "okxeOperatorServiceServiceImpl")
+    @Qualifier(value = "okxeOperatorServiceImpl")
     private IOperatorService operatorService;
     @Autowired
     private PlatFormConfigRepository configRepository;
     private Logger logger = LoggerFactory.getLogger(OkxeQuotationJob.class);
 
     //        @Scheduled(cron = "0 0/5 * * * ?")
-    @Scheduled(cron = "0 0/15 * * * ?")
+//    @Scheduled(cron = "0 0/15 * * * ?")
     public void execute() {
         PlatFormConfig platFormConfig = configRepository.selectByPlat(PlatType.OKXE.getCode());
         if (platFormConfig == null) {
