@@ -12,9 +12,17 @@ config:
   okxe:
     apiKey: 23ebb8d5-9f96-435f-abc5-49f7f7596f5f
     secretKey: 8BB13B41188F9E48B45D8B91B34AF4DA
-    baseSymbol: etc,btc,eth,eos,bch,btg
+    baseSymbol: etc,btc,eth,eos,bch,btg,bcd
     askSymbol: usdt,btc,eth
 
   binance:
     apiKey: hxUARdjucDDe2UNswXpo1ywbw1p4Cpm7zlDfCxiPWySho5sMTQ7oAU5xlmNNU3sA
     secretKey: ktJ598k7YdZbUGfZjq9QoBtWbfyHqgJUxkEllwkf6opkCbZneaAv2m62fBtzb35u
+
+  zb:
+    apiKey: ab3cabb9-79fb-4f67-b7c9-53a19ea11e92
+    secretKey: a4cd3842-9872-4ef9-bfd4-6148f1d08320
+
+  huobi:
+    apiKey: 457c36ab-d1d1dbf2-48dc3b60-a3f13
+    secretKey: 50fcde67-5537cbd4-e1cc1676-2cded

@@ -121,9 +121,8 @@ public class HttpUtil {
         return responseData;
     }
 
-    public String requestHttpPost(String url_prex, String url, Map<String, String> params) {
+    public String requestHttpPost(String url, Map<String, String> params) {
         IdleConnectionMonitor();
-        url = url_prex + url;
         HttpPost method = this.httpPostMethod(url);
         List<NameValuePair> valuePairs = this.convertMap2PostParams(params);
         UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(valuePairs, Consts.UTF_8);

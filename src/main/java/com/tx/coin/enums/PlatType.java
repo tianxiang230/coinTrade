@@ -9,7 +9,8 @@ package com.tx.coin.enums;
  */
 public enum PlatType {
     BIN("bin", "币安"),
-    OKXE("okxe", "OKXE");
+    OKXE("okxe", "OKXE"),
+    ZB("zb", "ZB");
     private String code;
     private String name;
 

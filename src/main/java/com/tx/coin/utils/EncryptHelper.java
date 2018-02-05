@@ -112,16 +112,17 @@ public class EncryptHelper {
         return null;
     }
 
-    public static void main(String[] args) {
-        Map<String, String> param = new HashMap<>();
-        param.put("api_key","few");
-        param.put("symbol","f9d9sag8fdsa");
-        param.put("type","sell");
-        param.put("price",String.valueOf("43.43"));
-        param.put("amount",String.valueOf("543.5"));
-        param.put("api_key", "fdsfod00-s");
-        System.out.println(toSortSet(param,"="));
-        String sign = EncryptHelper.sign(param, "f9ds90fds90", "utf-8");
-        System.out.println(sign);
+    public static void main(String[] args) throws IOException {
+//        Map<String, String> param = new HashMap<>();
+//        param.put("api_key","few");
+//        param.put("symbol","f9d9sag8fdsa");
+//        param.put("type","sell");
+//        param.put("price",String.valueOf("43.43"));
+//        param.put("amount",String.valueOf("543.5"));
+//        param.put("api_key", "fdsfod00-s");
+//        System.out.println(toSortSet(param,"="));
+//        String sign = EncryptHelper.sign(param, "f9ds90fds90", "utf-8");
+//        System.out.println(sign);
+        System.out.println(md5("mima123465"));
     }
 }

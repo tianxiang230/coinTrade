@@ -12,4 +12,6 @@ public class SystemConstant {
     public static final String SYMBOL_BASE = "baseSymbol";
 
     public static final String SYMBOL_ASK = "askSymbol";
+
+    public static String DEFAULT_CHARSET = "UTF-8";
 }
