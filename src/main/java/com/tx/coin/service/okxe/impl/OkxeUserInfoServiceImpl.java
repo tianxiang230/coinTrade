@@ -2,7 +2,6 @@ package com.tx.coin.service.okxe.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tx.coin.config.OkxePropertyConfig;
 import com.tx.coin.context.PlatConfigContext;
 import com.tx.coin.dto.UserInfoDTO;
 import com.tx.coin.entity.PlatFormConfig;
@@ -10,7 +9,7 @@ import com.tx.coin.enums.PlatType;
 import com.tx.coin.repository.PlatFormConfigRepository;
 import com.tx.coin.service.IUserInfoService;
 import com.tx.coin.utils.EncryptHelper;
-import com.tx.coin.utils.HttpUtil;
+import com.tx.coin.utils.HttpsUtil;
 import com.tx.coin.utils.JsonMapper;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -53,7 +52,7 @@ public class OkxeUserInfoServiceImpl implements IUserInfoService {
         param.put("sign",sign);
         String result=null;
         try {
-            result = HttpUtil.doPostSSL(userInfoUrl,param);
+            result = HttpsUtil.doPostSSL(userInfoUrl, param);
             logger.info("获取用户信息,请求:{},响应:{}", JsonMapper.nonDefaultMapper().toJson(param),result);
             if (StringUtils.isNotBlank(result)){
                 JsonNode rootNode=mapper.readTree(result);

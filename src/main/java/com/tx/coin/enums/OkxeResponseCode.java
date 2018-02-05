@@ -7,7 +7,7 @@ import java.util.Map;
  * 接口响应错误代码
  * Created by 你慧快乐 on 2018-1-12.
  */
-public class ResponseCode {
+public class OkxeResponseCode {
     public static Map<Integer, String> responseCode = new HashMap<>();
 
     static {
@@ -35,7 +35,7 @@ public class ResponseCode {
         responseCode.put(10023, "获取最新成交价错误");
         responseCode.put(10024, "可借金额不足");
         responseCode.put(10025, "额度已满，暂时无法借款");
-        responseCode.put(10026, "ResponseCode(含预约借款)及保证金部分不能提出 ");
+        responseCode.put(10026, "OkxeResponseCode(含预约借款)及保证金部分不能提出 ");
         responseCode.put(10027, "修改敏感提币验证信息，24小时内不允许提现");
         responseCode.put(10028, "提币金额已超过今日提币限额");
         responseCode.put(10029, "账户有借款，请撤消借款或者还清借款后提币");
@@ -113,6 +113,5 @@ public class ResponseCode {
         responseCode.put(1217, "您的委托价格超过最新成交价的±5%，存在风险，请重新下单");
         responseCode.put(1218, "下单失败，请稍后再试");
     }
-
 
 }

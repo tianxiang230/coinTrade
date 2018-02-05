@@ -7,14 +7,12 @@ import com.tx.coin.dto.KLineDataDTO;
 import com.tx.coin.enums.TimeIntervalEnum;
 import com.tx.coin.service.okxe.IKLineService;
 import com.tx.coin.utils.EncryptHelper;
-import com.tx.coin.utils.HttpUtil;
+import com.tx.coin.utils.HttpsUtil;
 import com.tx.coin.utils.IteratorUtils;
 import com.tx.coin.utils.JsonMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.*;
@@ -54,7 +52,7 @@ public class KLineServiceImpl implements IKLineService {
         param.put("secret_key", secretKey);
         String result = null;
         try {
-            result = HttpUtil.doGetSSL(klineUrl, param);
+            result = HttpsUtil.doGetSSL(klineUrl, param);
             logger.info("获取K线数据,请求:{},响应:{}", JsonMapper.nonDefaultMapper().toJson(param),result);
             try {
                 JsonNode rootNode = objectMapper.readTree(result);

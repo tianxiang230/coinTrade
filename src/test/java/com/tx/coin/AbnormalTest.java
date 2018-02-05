@@ -1,13 +1,9 @@
 package com.tx.coin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tx.coin.dto.OrderInfoDTO;
 import com.tx.coin.dto.UserInfoDTO;
-import com.tx.coin.enums.OrderStateEnum;
-import com.tx.coin.service.okxe.impl.OkxeOperatorServiceServiceImpl;
-import com.tx.coin.utils.HttpUtil;
+import com.tx.coin.utils.HttpsUtil;
 import com.tx.coin.utils.JsonMapper;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -49,7 +45,7 @@ public class AbnormalTest {
     @Test
     public void testHttp(){
         String url="https://www.baidu.com";
-        String result =  HttpUtil.doGetSSL(url,null);
+        String result = HttpsUtil.doGetSSL(url, null);
         System.out.println(result);
     }
 }

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tx.coin.dto.QuotationsDTO;
 import com.tx.coin.entity.Quotations;
 import com.tx.coin.service.ICoinQuotationService;
-import com.tx.coin.utils.HttpUtil;
+import com.tx.coin.utils.HttpsUtil;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class OkxeCoinQuotationsServiceImpl implements ICoinQuotationService {
     @Override
     public Quotations getQuotation(String symbol) {
         QuotationsDTO result = null;
-        String remoteStr = HttpUtil.doGetSSL(remoteUrl + symbol, null);
+        String remoteStr = HttpsUtil.doGetSSL(remoteUrl + symbol, null);
         logger.info("获取行情远程接口返回:{}", remoteStr);
         ObjectMapper objectMapper = new ObjectMapper();
         try {

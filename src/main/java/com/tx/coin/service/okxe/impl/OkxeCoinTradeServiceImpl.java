@@ -2,17 +2,16 @@ package com.tx.coin.service.okxe.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tx.coin.config.OkxePropertyConfig;
 import com.tx.coin.context.PlatConfigContext;
 import com.tx.coin.entity.OrderRecord;
 import com.tx.coin.entity.PlatFormConfig;
 import com.tx.coin.enums.OrderType;
-import com.tx.coin.enums.ResponseCode;
+import com.tx.coin.enums.OkxeResponseCode;
 import com.tx.coin.enums.TradeType;
 import com.tx.coin.repository.OrderRecordRepository;
 import com.tx.coin.service.ICoinTradeService;
 import com.tx.coin.utils.EncryptHelper;
-import com.tx.coin.utils.HttpUtil;
+import com.tx.coin.utils.HttpsUtil;
 import com.tx.coin.utils.JsonMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -73,14 +72,14 @@ public class OkxeCoinTradeServiceImpl implements ICoinTradeService {
         String sign = EncryptHelper.sign(param, secretKey, "utf-8");
         param.put("sign", sign);
         param.put("secret_key", secretKey);
-        String result = HttpUtil.doPostSSL(tradeUrl, param);
+        String result = HttpsUtil.doPostSSL(tradeUrl, param);
         logger.info("币币交易请求参数:{},响应:{}", JsonMapper.nonDefaultMapper().toJson(param), result);
         try {
             boolean state = false;
             JsonNode resultNode = mapper.readTree(result).get("result");
             if (resultNode == null) {
                 Integer errorCode = mapper.readTree(result).get("error_code").asInt();
-                String errorMsg = ResponseCode.responseCode.get(errorCode);
+                String errorMsg = OkxeResponseCode.responseCode.get(errorCode);
                 logger.info("下单交易出错:{}", errorMsg);
             } else {
                 state = resultNode.asBoolean();
@@ -118,7 +117,7 @@ public class OkxeCoinTradeServiceImpl implements ICoinTradeService {
         param.put("sign", sign);
         param.put("secret_key", secretKey);
         String result = null;
-        result = HttpUtil.doPostSSL(cancelOrderUrl, param);
+        result = HttpsUtil.doPostSSL(cancelOrderUrl, param);
         logger.info("取消订单操作,请求参数:{},响应:{}", JsonMapper.nonDefaultMapper().toJson(param), result);
         try {
             JsonNode successNode = mapper.readTree(result).get("success");
@@ -128,7 +127,7 @@ public class OkxeCoinTradeServiceImpl implements ICoinTradeService {
                     return true;
                 }
                 Integer errorCode = mapper.readTree(result).get("error_code").asInt();
-                logger.info(ResponseCode.responseCode.get(errorCode));
+                logger.info(OkxeResponseCode.responseCode.get(errorCode));
                 return false;
             }
             String successOrders = mapper.readTree(result).get("success").toString();
