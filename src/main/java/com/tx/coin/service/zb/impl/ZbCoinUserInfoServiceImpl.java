@@ -8,7 +8,7 @@ import com.tx.coin.enums.PlatType;
 import com.tx.coin.repository.PlatFormConfigRepository;
 import com.tx.coin.service.IUserInfoService;
 import com.tx.coin.utils.Digests;
-import com.tx.coin.utils.HttpUtil;
+import com.tx.coin.utils.HttpsUtil;
 import com.tx.coin.utils.SortMapUtil;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -58,7 +58,7 @@ public class ZbCoinUserInfoServiceImpl implements IUserInfoService {
 
         params.put("sign", sign);
         params.put("reqTime", System.currentTimeMillis() + "");
-        String json = HttpUtil.getInstance().requestHttpPost(remoteUrl, params);
+        String json = HttpsUtil.doGetSSL(remoteUrl, params);
         logger.info("ZB获取用户信息接口返回:{}", json);
         try {
             JsonNode rootNode = objectMapper.readTree(json);

@@ -34,4 +34,13 @@ public enum TradeType {
     public String getValue() {
         return value;
     }
+
+    public static String getCodeByValue(String value) {
+        for (TradeType tradeType : TradeType.values()) {
+            if (tradeType.getValue().equals(value)) {
+                return tradeType.getCode();
+            }
+        }
+        return null;
+    }
 }

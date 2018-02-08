@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,23 +48,28 @@ public class ZbCoinTradeServiceImpl implements ICoinTradeService {
     private ObjectMapper objectMapper = new ObjectMapper();
     Logger logger = LoggerFactory.getLogger(ZbCoinTradeServiceImpl.class);
     private Integer successCode = 1000;
+    private DecimalFormat priceFormat = new DecimalFormat("####.###");
+    private DecimalFormat amountFormat = new DecimalFormat("####.##");
 
     @Override
-    public String coinTrade(String symbol, TradeType type, double price, double amount) {
+    public String coinTrade(String symbol, TradeType tradeType, double price, double amount) {
+        String dealPrice = priceFormat.format(price);
+        String dealAmount = amountFormat.format(amount);
         PlatFormConfig zbPropertyConfig = PlatConfigContext.getCurrentConfig();
         if (zbPropertyConfig == null) {
             zbPropertyConfig = configRepository.selectByPlat(PlatType.ZB.getCode());
         }
+        logger.info(String.format("ZB执行交易[%s]操作,交易币种[%s],价格[%s],交易量[%s]", tradeType.getName(), symbol, dealPrice, dealAmount));
         Map<String, String> params = new HashMap<>(10);
         String accessKey = zbPropertyConfig.getApiKey();
         String secretKey = zbPropertyConfig.getSecretKey();
         params.put("accesskey", accessKey);
         String digest = Digests.SHA(secretKey, null).toLowerCase();
         params.put("method", tradeMethod);
-        params.put("amount", String.valueOf(amount));
+        params.put("amount", dealAmount);
         params.put("currency", symbol);
-        params.put("price", String.valueOf(price));
-        params.put("tradeType", type.getValue());
+        params.put("price", dealPrice);
+        params.put("tradeType", tradeType.getValue());
 
         // 参数按照ASCII值排序
         String sortParam = SortMapUtil.toStringMap(params);
@@ -80,7 +86,7 @@ public class ZbCoinTradeServiceImpl implements ICoinTradeService {
             OrderRecord orderRecord = null;
             if (successCode.equals(code)) {
                 orderId = rootNode.get("id").asText();
-                orderRecord = new OrderRecord(symbol, type, OrderType.COMPLETED, price, amount);
+                orderRecord = new OrderRecord(symbol, tradeType, OrderType.COMPLETED, price, amount);
                 orderRecord.setOrderId(orderId);
             } else {
                 String message = rootNode.get("message").asText();
@@ -91,7 +97,7 @@ public class ZbCoinTradeServiceImpl implements ICoinTradeService {
         } catch (IOException e) {
             logger.error("ZB下单出错,{}", ExceptionUtils.getStackTrace(e));
         }
-        return null;
+        return orderId;
     }
 
     @Override
@@ -115,8 +121,9 @@ public class ZbCoinTradeServiceImpl implements ICoinTradeService {
 
         params.put("sign", sign);
         params.put("reqTime", System.currentTimeMillis() + "");
-        String json = HttpUtil.getInstance().requestHttpPost(cancelUrl, params);
         try {
+            String json = HttpUtil.getInstance().requestHttpPost(cancelUrl, params);
+            logger.info("ZB取消订单返回:{}", json);
             JsonNode rootNode = objectMapper.readTree(json);
             Integer code = rootNode.get("code").asInt();
             if (successCode.equals(code)) {

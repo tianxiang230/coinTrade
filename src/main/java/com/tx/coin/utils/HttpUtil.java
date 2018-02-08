@@ -82,7 +82,7 @@ public class HttpUtil {
         return new HttpGet(url);
     }
 
-    public String requestHttpGet(String url, Map<String, String> params) throws HttpException, IOException {
+    public String requestHttpGet(String url, Map<String, String> params) {
         String pas = "";
         for (Map.Entry<String, String> entry : params.entrySet()) {
             String key = entry.getKey();
@@ -135,7 +135,7 @@ public class HttpUtil {
             if (entity == null) {
                 return null;
             }
-            responseData = EntityUtils.toString(entity, "utf-8");
+            responseData = EntityUtils.toString(entity, Consts.UTF_8);
         } catch (ClientProtocolException e) {
             e.printStackTrace();
         } catch (IOException e) {

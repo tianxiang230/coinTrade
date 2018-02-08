@@ -50,7 +50,7 @@ public class OkxeCoinTradeServiceImpl implements ICoinTradeService {
     public String coinTrade(String symbol, TradeType tradeType, double price, double amount) {
         PlatFormConfig okxePropertyConfig = PlatConfigContext.getCurrentConfig();
         decimalFormat.setRoundingMode(RoundingMode.DOWN);
-        logger.info(String.format("执行交易[%s]操作,交易币种[%s],价格[%f],交易量[%f]", tradeType.getName(), symbol, price, amount));
+        logger.info(String.format("OKXE执行交易[%s]操作,交易币种[%s],价格[%f],交易量[%f]", tradeType.getName(), symbol, price, amount));
         if (StringUtils.isBlank(symbol) || price <= 0 || amount <= 0) {
             logger.info("交易参数不合法,symbol:{},price:{},amount:{}", new Object[]{symbol, price, amount});
             return null;
