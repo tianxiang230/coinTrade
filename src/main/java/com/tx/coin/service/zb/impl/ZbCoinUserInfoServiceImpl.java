@@ -36,7 +36,7 @@ public class ZbCoinUserInfoServiceImpl implements IUserInfoService {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     private Logger logger = LoggerFactory.getLogger(ZbCoinUserInfoServiceImpl.class);
-    private String remoteUrl = "https://trade.zb.com/api/getAccountInfo";
+    private String remoteUrl = "https://trade.bitkk.com/api/getAccountInfo";
     private String method = "getAccountInfo";
 
     @Override

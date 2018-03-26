@@ -60,7 +60,7 @@ public class ZbOperatorServiceImpl extends BaseOperatorService implements IOpera
         PlatFormConfig zbPropertyConfig = PlatConfigContext.getCurrentConfig();
         try {
             String symbol = zbPropertyConfig.getU1() + "_" + zbPropertyConfig.getU2();
-            List<Double> prices = quotationCommonService.getLocalNewPrice(symbol, PlatType.ZB);
+            List<Double> prices = quotationCommonService.getHourPrice(symbol, PlatType.ZB);
             if (prices.size() < IQuotationCommonService.DATA_SIZE) {
                 zbPropertyConfig.setTradeOrNot(false);
                 configRepository.save(zbPropertyConfig);

@@ -40,7 +40,7 @@ public class ZbQuotationJob {
 
     Logger logger = LoggerFactory.getLogger(ZbQuotationJob.class);
 
-    @Scheduled(cron = "0 0/6 * * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
     public void execute() {
         PlatFormConfig platFormConfig = configRepository.selectByPlat(PlatType.ZB.getCode());
         if (platFormConfig == null) {

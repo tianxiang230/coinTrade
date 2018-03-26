@@ -32,7 +32,7 @@ import java.util.*;
 public class ZbOrderInfoServiceImpl implements IOrderInfoService {
     @Autowired
     private PlatFormConfigRepository configRepository;
-    private final String remoteUrl = "https://trade.zb.com/api/getUnfinishedOrdersIgnoreTradeType";
+    private final String remoteUrl = "https://trade.bitkk.com/api/getUnfinishedOrdersIgnoreTradeType";
     private final String method = "getUnfinishedOrdersIgnoreTradeType";
     private final String defaultPageIndex = "1";
     private final String defaultPageSize = "10";

@@ -39,10 +39,10 @@ public class ZbCoinTradeServiceImpl implements ICoinTradeService {
     @Autowired
     private OrderRecordRepository orderRecordRepository;
 
-    private final String tradeUrl = "https://trade.zb.com/api/order";
+    private final String tradeUrl = "https://trade.bitkk.com/api/order";
     private final String tradeMethod = "order";
 
-    private final String cancelUrl = "https://trade.zb.com/api/cancelOrder";
+    private final String cancelUrl = "https://trade.bitkk.com/api/cancelOrder";
     private final String cancelMethod = "cancelOrder";
 
     private ObjectMapper objectMapper = new ObjectMapper();

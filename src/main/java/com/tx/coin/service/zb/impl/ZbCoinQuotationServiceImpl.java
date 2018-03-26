@@ -22,7 +22,7 @@ import java.io.IOException;
 @Service
 public class ZbCoinQuotationServiceImpl implements ICoinQuotationService {
     private ObjectMapper objectMapper = new ObjectMapper();
-    private String remoteUrl = "http://api.zb.com/data/v1/ticker";
+    private String remoteUrl = "http://api.bitkk.com/data/v1/ticker";
     private Logger logger = LoggerFactory.getLogger(ZbCoinQuotationServiceImpl.class);
 
     @Override

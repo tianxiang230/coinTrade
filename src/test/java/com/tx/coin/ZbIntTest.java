@@ -42,7 +42,7 @@ public class ZbIntTest {
     @Autowired
     @Qualifier(value = "zbOrderInfoServiceImpl")
     private IOrderInfoService orderInfoService;
-    String symbol = "usdt_qc";
+    String symbol = "zb_qc";
 
     @Test
     public void testQuotation() {

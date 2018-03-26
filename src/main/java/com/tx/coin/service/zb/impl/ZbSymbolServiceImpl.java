@@ -37,7 +37,7 @@ public class ZbSymbolServiceImpl implements ISymbolService {
                 "qc,hlc_btc,bcw_usdt,bcw_qc,bcw_btc,btp_usdt,btp_qc,btp_btc,bitcny_qc,topc_usdt,topc_qc,topc_btc,ent_" +
                 "usdt,ent_qc,ent_btc,bat_usdt,bat_qc,bat_btc,1st_usdt,1st_qc,1st_btc,safe_usdt,safe_qc,safe_btc,qun_u" +
                 "sdt,qun_qc,qun_btc,btn_usdt,btn_qc,btn_btc,true_usdt,true_qc,true_btc,cdc_usdt,cdc_qc,cdc_btc,ddm_us" +
-                "dt,ddm_qc,ddm_btc,bite_btc,hotc_usdt,hotc_qc,hotc_btc,qc_usdt,usdt_qc,xuc_qc,xuc_btc,epc_qc,epc_btc";
+                "dt,ddm_qc,ddm_btc,bite_btc,hotc_usdt,hotc_qc,hotc_btc,qc_usdt,usdt_qc,xuc_qc,xuc_btc,epc_qc,epc_btc,zb_qc";
         String[] symPairs = selectedSym.split(",");
         for (String symbolPair : symPairs) {
             String[] pair = symbolPair.split("_");
